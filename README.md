@@ -1,0 +1,1 @@
+a basic machine learning project to train a model to predict future price movements in forex markets
