@@ -86,20 +86,13 @@ def getDataLoop(
     currentStart = start
 
     while currentStart < end:
-        if currentStart + 5000 * getOneCandle() < end:
-            params = {
-                "from": currentStart.isoformat() + "Z", # zero offset from UTC
-                "granularity": gran,
-                "count": 5000,
-                "price": "M"
-            }
-        else:
-            params = {
-                "from": currentStart.isoformat() + "Z",
-                "to": end.isoformat() + "Z",
-                "granularity": gran,
-                "price": "M"
-            }
+        chunkEnd = min(currentStart + 5000 * getOneCandle(), end) # prevent overshooting
+        params = {
+            "from": currentStart.isoformat() + "Z", # zero offset from UTC
+            "to": chunkEnd.isoformat() + "Z",
+            "granularity": gran,
+            "price": "M"
+        }
         response = requests.get(baseUrl + endpoint, headers=headers, params=params)
 
         # inspect response
@@ -110,8 +103,8 @@ def getDataLoop(
         data = response.json()
         candles = data["candles"]
         if not candles:
-            print("Data not fetched")
-            break
+            currentStart += getOneCandle()
+            continue
         allCandles += candles
 
         # move start time forward
