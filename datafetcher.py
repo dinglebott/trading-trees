@@ -76,9 +76,9 @@ def getDataLoop(
             case "H":
                 return timedelta(hours=int(gran[1:]))
             case "D":
-                return timedelta(days=int(gran[1:]))
+                return timedelta(days=1)
             case "W":
-                return timedelta(weeks=int(gran[1:]))
+                return timedelta(weeks=1)
 
     # get response
     endpoint = f"/v3/instruments/{instr}/candles"
