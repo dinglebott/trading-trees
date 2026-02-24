@@ -1,10 +1,12 @@
+# EXPORTS:
+# getData()
+# getDataLoop()
 import os
 from dotenv import load_dotenv
 import requests
 import json
 from datetime import datetime, timedelta
 import time
-import pandas as pd
 
 # get oanda api key (from .env file)
 load_dotenv()
@@ -21,10 +23,9 @@ baseUrl = "https://api-fxtrade.oanda.com" # access token generated from live acc
 # price: mid(M), bid(B), ask(A)
 # LOOP variant:
 # start, end in datetime format: e.g. datetime(2000, 1, 1) (year, month, day)
-# no count (defined by start/end and granularity)
 
 
-# FETCH DATA ONCE (also saves locally as JSON file)
+# FETCH DATA ONCE (saves locally as JSON file)
 def getData(instr="EUR_USD", gran="H1", count=500):
     # get response
     params = {
@@ -55,25 +56,50 @@ def getData(instr="EUR_USD", gran="H1", count=500):
     return filepath
 
 
-# FETCH DATA LOOP (also saves locally as JSON file)
+# FETCH DATA LOOP (saves locally as JSON file)
 def getDataLoop(
     start,
     end,
     instr="EUR_USD",
     gran="H1"
 ):
+    # helper
+    def getOneCandle():
+        match gran[0]:
+            case "S":
+                return timedelta(seconds=int(gran[1:]))
+            case "M":
+                if len(gran) == 1:
+                    return timedelta(days=31)
+                else:
+                    return timedelta(minutes=int(gran[1:]))
+            case "H":
+                return timedelta(hours=int(gran[1:]))
+            case "D":
+                return timedelta(days=int(gran[1:]))
+            case "W":
+                return timedelta(weeks=int(gran[1:]))
+
     # get response
     endpoint = f"/v3/instruments/{instr}/candles"
     allCandles = []
     currentStart = start
 
     while currentStart < end:
-        params = {
-            "from": currentStart.isoformat() + "Z", # zero offset from UTC
-            "granularity": gran,
-            "count": 5000,
-            "price": "M"
-        }
+        if currentStart + 5000 * getOneCandle() < end:
+            params = {
+                "from": currentStart.isoformat() + "Z", # zero offset from UTC
+                "granularity": gran,
+                "count": 5000,
+                "price": "M"
+            }
+        else:
+            params = {
+                "from": currentStart.isoformat() + "Z",
+                "to": end.isoformat() + "Z",
+                "granularity": gran,
+                "price": "M"
+            }
         response = requests.get(baseUrl + endpoint, headers=headers, params=params)
 
         # inspect response
@@ -90,25 +116,10 @@ def getDataLoop(
 
         # move start time forward
         lastCandleTime = candles[-1]["time"] # in isoformat
-        match gran[0]: # get 1 candle worth of time in timedelta format
-            case "S":
-                timeAdvance = timedelta(seconds=int(gran[1:]))
-            case "M":
-                if len(gran) == 1:
-                    timeAdvance = timedelta(days=31)
-                else:
-                    timeAdvance = timedelta(minutes=int(gran[1:]))
-            case "H":
-                timeAdvance = timedelta(hours=int(gran[1:]))
-            case "D":
-                timeAdvance = timedelta(days=int(gran[1:]))
-            case "W":
-                timeAdvance = timedelta(weeks=int(gran[1:]))
-        
         currentStart = datetime.strptime(
             lastCandleTime.split(".")[0], # split to remove fractional seconds
             "%Y-%m-%dT%H:%M:%S" # format
-        ) + timeAdvance # avoid duplicating last candle
+        ) + getOneCandle() # avoid duplicating last candle
         print("Downloaded until: " + lastCandleTime)
 
         # rate limit
@@ -119,29 +130,8 @@ def getDataLoop(
     if not os.path.exists(directory):
         os.makedirs(directory)
     timestamp = datetime.now().strftime("%m%d-%H%M") # extract month date hour minute from datetime
-    filename = f"{instr}_{gran}_{start}-{end}_{timestamp}.json"
+    filename = f"{instr}_{gran}_{start}_{end}_{timestamp}.json"
     filepath = os.path.join(directory, filename)
     with open(filepath, "w") as file:
         json.dump({"candles": allCandles}, file, indent=4)
     print("Saved to: " + filename)
-
-
-# PARSING DATA
-def parseData(jsonPath):
-    # deserialise json data
-    with open(jsonPath, "r") as file:
-        rawData = json.load(file) # rawData is a Python dict
-    
-    # unpack dict
-    records = []
-    for c in rawData["candles"]:
-        if c["complete"]:
-            records.append({
-                "time": c["time"],
-                "open": float(c["mid"]["o"]), # convert from string
-                "high": float(c["mid"]["h"]),
-                "low": float(c["mid"]["l"]),
-                "close": float(c["mid"]["c"]),
-                "volume": c["volume"]
-            })
-    df = pd.DataFrame(records)
