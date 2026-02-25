@@ -1,10 +1,7 @@
 from custom_modules import datafetcher
 from datetime import datetime
 
-datafetcher.getDataLoop(datetime(2005, 1, 1), datetime(2020, 1, 1), "EUR_USD", "H4") # 15yrs
-datafetcher.getDataLoop(datetime(2020, 1, 1), datetime(2023, 1, 1), "EUR_USD", "H4") # 3yrs
-datafetcher.getDataLoop(datetime(2023, 1, 1), datetime(2026, 1, 1), "EUR_USD", "H4") # 3yrs
-
-datafetcher.getDataLoop(datetime(2005, 1, 1), datetime(2020, 1, 1), "EUR_USD", "H1")
-datafetcher.getDataLoop(datetime(2020, 1, 1), datetime(2023, 1, 1), "EUR_USD", "H1")
-datafetcher.getDataLoop(datetime(2023, 1, 1), datetime(2026, 1, 1), "EUR_USD", "H1")
+# 10 folds
+for x in range(2010, 2020):
+    datafetcher.getDataLoop(datetime(x, 1, 1), datetime(x + 6, 1, 1), "EUR_USD", "H1", f"fold_{x - 2009}") # train (6yrs)
+    datafetcher.getDataLoop(datetime(x + 6, 1, 1), datetime(x + 7, 1, 1), "EUR_USD", "H1", f"fold_{x - 2009}") # test (1yr)

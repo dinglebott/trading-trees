@@ -61,7 +61,8 @@ def getDataLoop(
     start,
     end,
     instr="EUR_USD",
-    gran="H1"
+    gran="H1",
+    subfolder=""
 ):
     # helper
     def getOneCandle():
@@ -119,7 +120,7 @@ def getDataLoop(
         time.sleep(0.5)
     
     # save to file
-    directory = f"json_data/{instr}/{gran}"
+    directory = f"json_data/{instr}/{gran}/{subfolder}"
     if not os.path.exists(directory):
         os.makedirs(directory)
     timestamp = datetime.now().strftime("%m%d-%H%M") # extract month date hour minute from datetime
