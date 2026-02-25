@@ -22,3 +22,6 @@ def parseData(jsonPath):
                 "volume": c["volume"]
             })
     df = pd.DataFrame(records)
+
+    # add features
+    
