@@ -55,7 +55,7 @@ def parseData(jsonPath):
         (df["high"] - df["close"].shift(1)).abs(),
         (df["low"]  - df["close"].shift(1)).abs()
     ], axis=1).max(axis=1) # greatest of 3 values
-    df["atr"] = trueRange.rolling(14).mean() / df["close"]
+    df["atr_14"] = trueRange.rolling(14).mean() / df["close"]
     # Bollinger bands
     bb_mid = df["close"].rolling(20).mean()
     bb_std = df["close"].rolling(20).std()
