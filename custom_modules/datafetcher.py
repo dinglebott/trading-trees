@@ -123,8 +123,7 @@ def getDataLoop(
     directory = f"json_data/{instr}/{gran}/{subfolder}"
     if not os.path.exists(directory):
         os.makedirs(directory)
-    timestamp = datetime.now().strftime("%m%d") # extract month date from datetime
-    filename = f"{instr}_{gran}_{start.strftime('%Y-%m-%d')}_{end.strftime('%Y-%m-%d')}_{timestamp}.json"
+    filename = f"{instr}_{gran}_{start.strftime('%Y-%m-%d')}_{end.strftime('%Y-%m-%d')}.json"
     filepath = os.path.join(directory, filename)
     with open(filepath, "w") as file:
         json.dump({"candles": allCandles}, file, indent=4)
