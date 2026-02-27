@@ -33,3 +33,13 @@ Bollinger band position => (C - lowerband) / (upperband - lowerband)
 ### Lagged features:
 1/2/3/4/5-period lagged returns => Return values of previous 5 candles\
 1/2/3/4/5-period lagged volume => Volume values of previous 5 candles
+
+## HYPERPARAMETER TUNING
+### Variations tested:
+No. of trees:      [100, 200, 300]\
+Max tree depth:    [3, 4, 5, 6]\
+Learning rate:     [0.01, 0.05, 0.1] => shrinks contribution of each tree\
+Data subsample:    [0.7, 0.8, 1.0] => fraction of data sampled per tree\
+Feature subsample: [0.7, 0.8, 1.0] => fraction of features sampled per tree\
+Min child weight:  [1, 3, 5] => Higher values make model require more evidence to make a split
+### Results:
