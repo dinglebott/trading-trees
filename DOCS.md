@@ -12,34 +12,34 @@ Train: 2011-2016, Test: 2017\
 Train: 2019-2024, Test: 2025
 
 ## INITIAL FEATURE ENGINEERING
-### Price:
+#### Price:
 Returns => Percentage change from previous close\
 High-low spread (normalised) => (H - L) / C\
 Open-close spread (normalised) => (C - O) / C\
 Body ratio => OC spread / HL spread
-### Trend:
+#### Trend:
 12-period EMA (normalised) => (C / EMA) - 1\
 50-period EMA (normalised) => (C / EMA) - 1
-### Momentum:
+#### Momentum:
 14-period RSI\
 12/26/9-period MACD histogram => (ema12 - ema26) - signal
-### Volatility:
+#### Volatility:
 14-period ATR\
 Bollinger band width (normalised) => (upperband - lowerband) / midband
-### Volume:
+#### Volume:
 Volume ratio => volume / volumesma30
-### Mean reversion:
+#### Mean reversion:
 Bollinger band position => (C - lowerband) / (upperband - lowerband)
-### Lagged features:
+#### Lagged features:
 1/2/3/4/5-period lagged returns => Return values of previous 5 candles\
 1/2/3/4/5-period lagged volume => Volume values of previous 5 candles
 
 ## HYPERPARAMETER TUNING
-### Variations tested:
+#### Variations tested:
 No. of trees:      [100, 200, 300]\
 Max tree depth:    [3, 4, 5, 6]\
 Learning rate:     [0.01, 0.05, 0.1] => shrinks contribution of each tree\
 Data subsample:    [0.7, 0.8, 1.0] => fraction of data sampled per tree\
 Feature subsample: [0.7, 0.8, 1.0] => fraction of features sampled per tree\
 Min child weight:  [1, 3, 5] => Higher values make model require more evidence to make a split
-### Results:
+#### Results:
