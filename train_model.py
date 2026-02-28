@@ -3,6 +3,7 @@ from sklearn.metrics import accuracy_score, f1_score, roc_auc_score, confusion_m
 import pandas as pd
 from custom_modules import dataparser
 from datetime import datetime
+import os
 
 # PHASE 4: TRAIN AND EVALUATE FINAL MODEL
 yearNow = 2026
@@ -78,4 +79,11 @@ print(f"Accuracy: {accuracy:.3f}%")
 print(f"F1 score (macro-averaged): {f1Score:.5f}")
 print(f"ROC-AUC score: {rocAucScore:.5f}")
 print(f"Confusion matrix: {cmatrixDf}")
-model.save_model(f"XGBoost_{instrument}_{granularity}_{yearNow}.json")
+
+directory = "models"
+if not os.path.exists(directory):
+    os.makedirs(directory)
+filename = f"XGBoost_{instrument}_{granularity}_{yearNow}.json"
+filepath = os.path.join(directory, filename)
+model.save_model(filepath)
+print("\nModel saved to: " + filename)

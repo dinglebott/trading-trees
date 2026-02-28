@@ -57,12 +57,12 @@ Min child weight:  [1, 3, 5] => Higher values make model require more evidence t
 Accuracy: %\
 F1 score: \
 ROC-AUC score: \
-Confusion matrix: \
+Confusion matrix: 
 #### Explanation of metrics
-Positive = 1 (upward move), Negative = 0 (downward move)
-Accuracy (0-100) => (Correct predictions / Total predictions) * 100%
-F1 score (0-1) => Harmonic mean of Precision and Recall
-F1 score (macro-averaged) => Unweighted mean of F1 score calculated for each class (1 and 0)
-ROC-AUC score (0-1) => Probability that a randomly chosen 1 is ranked higher than a randomly chosen 0 by the model
-Precision (0-1) => Correctly predicted 1's / All predicted 1's
+Positive = 1 (upward move), Negative = 0 (downward move)\
+Accuracy (0-100) => (Correct predictions / Total predictions) * 100%\
+F1 score (0-1) => Harmonic mean of Precision and Recall\
+F1 score (macro-averaged) => Unweighted mean of F1 score calculated for each class (1 and 0)\
+ROC-AUC score (0-1) => Probability that a randomly chosen 1 is ranked higher than a randomly chosen 0 by the model\
+Precision (0-1) => Correctly predicted 1's / All predicted 1's\
 Recall (0-1) => Correctly predicted 1's / All real 1's
