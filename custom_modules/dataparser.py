@@ -1,5 +1,6 @@
 # EXPORTS:
-# parseData()
+# parseData() adds features and returns DataFrame
+# splitByDate() returns specified slice of DataFrame by date
 import json
 import pandas as pd
 
@@ -71,5 +72,12 @@ def parseData(jsonPath):
         df[f"vol_ratio_lag{lag}"] = df["vol_ratio"].shift(lag)
     
     # drop empty rows and return
-    df.dropna()
+    df.dropna(inplace=True)
     return df
+
+def splitByDate(df, start, end):
+    times = pd.to_datetime(df["time"].str.split(".").str[0], format="%Y-%m-%dT%H:%M:%S") # convert timestamps to datetime objects
+    # .str applies operation to entire series cellwise
+    mask = (times >= start) & (times < end)
+    return df[mask].reset_index(drop=True)
+    # df[boolean-mask] filters out values according to the mask

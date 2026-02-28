@@ -1,16 +1,16 @@
 # EXPORTS:
-# tuneHyperparams()
+# tuneHyperparams() returns DataFrame of results from all folds, and DataFrame of final selected params
 import xgboost as xgb
 from sklearn.model_selection import TimeSeriesSplit, RandomizedSearchCV
-from sklearn.metrics import f1_score
 import pandas as pd
 import dataparser
+from datetime import datetime
 
 def tuneHyperparams(yearNow, instr, gran, prunedFeatures=None):
-    # split into subfolds (respects time order)
+    # SUBFOLD SPLIT (respects time order)
     tscv = TimeSeriesSplit(n_splits=5)
 
-    # define hyperparameters to test
+    # DEFINE PARAMS
     param_grid = {
         "n_estimators":     [100, 200, 300],
         "max_depth":        [3, 4, 5, 6],
@@ -20,7 +20,7 @@ def tuneHyperparams(yearNow, instr, gran, prunedFeatures=None):
         "min_child_weight": [1, 3, 5]
     }
 
-    # define all features
+    # DEFINE FEATURES
     features = [
         "return", "hl_spread", "oc_spread", "body_ratio",
         "normalised_ema15", "normalised_ema50",
@@ -31,7 +31,7 @@ def tuneHyperparams(yearNow, instr, gran, prunedFeatures=None):
         "vol_ratio_lag1", "vol_ratio_lag2", "vol_ratio_lag3", "vol_ratio_lag4", "vol_ratio_lag5"
     ]
 
-    # prune features
+    # PRUNE FEATURES
     if prunedFeatures is not None:
         for ft in prunedFeatures:
             try:
@@ -39,27 +39,26 @@ def tuneHyperparams(yearNow, instr, gran, prunedFeatures=None):
             except ValueError:
                 print("prunedFeatures must be a list/tuple of valid features")
                 break
+    
+    # LOAD DATAFRAME
+    df = dataparser.parseData(f"json_data/{instr}_{gran}_{yearNow - 16}-01-01_{yearNow}-01-01.json")
 
-    # aggregate results from all folds
+    # INITIALISE CUMULATIVE RESULTS
     hyperparams = ["n_estimators", "max_depth", "learning_rate", "subsample", "colsample_bytree", "min_child_weight"]
     allResults = pd.DataFrame(columns=hyperparams)
 
-    # loop test through all folds (builds a fresh model for each combination of hyperparameters)
-    for index, year in enumerate(range(yearNow - 16, yearNow - 6), start=1):
-        # load dataframes
-        dfTrain = dataparser.parseData(f"json_data/{instr}/{gran}/fold_{index}/{instr}_{gran}_{year}-01-01_{year + 6}-01-01.json")
-        dfTest = dataparser.parseData(f"json_data/{instr}/{gran}/fold_{index}/{instr}_{gran}_{year + 6}-01-01_{year + 7}-01-01.json")
+    # LOOP TEST (builds a fresh model for each combination of hyperparameters)
+    for fold in range(10):
+        # split dataframes
+        dfTrain = dataparser.splitByDate(df, datetime(yearNow - 16 + fold, 1, 1), datetime(yearNow - 9 + fold, 1, 1))
 
         # target variable: next candle return => positive (1) or negative (0)
-        for df in (dfTrain, dfTest):
-            df["target"] = (df["return"].shift(-1) > 0).astype(int) # boolean to integer
-            df.dropna(inplace=True)
+        dfTrain["target"] = (dfTrain["return"].shift(-1) > 0).astype(int) # boolean to integer
+        dfTrain.dropna(inplace=True)
         
         # define datasets
         X_train = dfTrain[features]
         y_train = dfTrain["target"]
-        X_test = dfTest[features]
-        y_test = dfTest["target"]
         
         # create new tester object
         search = RandomizedSearchCV(
@@ -73,13 +72,13 @@ def tuneHyperparams(yearNow, instr, gran, prunedFeatures=None):
             random_state=42 # seed for random combination sampling (for reproducibility)
         )
 
-        # test and compare
+        # train and compare models
         search.fit(X_train, y_train)
 
         # append to aggregate results
         allResults.loc[len(allResults)] = search.best_params_
     
-    # parse all data and conclude
+    # PARSE ALL DATA AND CONCLUDE
     finalParams = {
         "n_estimators":     int(allResults["n_estimators"].mode()[0]),
         "max_depth":        int(allResults["max_depth"].mode()[0]),
@@ -90,5 +89,5 @@ def tuneHyperparams(yearNow, instr, gran, prunedFeatures=None):
     }
     finalParams = pd.DataFrame.from_dict(finalParams, orient="index", columns=["Best value"])
     
-    # return results
+    # RETURN RESULTS
     return allResults, finalParams

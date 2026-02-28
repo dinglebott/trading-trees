@@ -1,8 +1,9 @@
 # EXPORTS:
-# evaluateFeatures()
-import pandas as pd
+# evaluateFeatures() gets feature importances and returns as a Series
 import xgboost as xgb
+import pandas as pd
 import dataparser
+from datetime import datetime
 
 def evaluateFeatures(yearNow, instr, gran,
                  params={
@@ -27,34 +28,33 @@ def evaluateFeatures(yearNow, instr, gran,
         "vol_ratio_lag1", "vol_ratio_lag2", "vol_ratio_lag3", "vol_ratio_lag4", "vol_ratio_lag5"
     ]
     
-    # CUMULATIVE SCORE
+    # LOAD DATAFRAME
+    df = dataparser.parseData(f"json_data/{instr}_{gran}_{yearNow - 16}-01-01_{yearNow}-01-01.json")
+
+    # INITIALISE CUMULATIVE SCORE
     avgImportances = pd.Series(0.0, index=features)
 
     # LOOP TEST THROUGH ALL FOLDS
-    for index, year in enumerate(range(yearNow - 16, yearNow - 6), start=1):
-        # LOAD DATAFRAMES
-        dfTrain = dataparser.parseData(f"json_data/{instr}/{gran}/fold_{index}/{instr}_{gran}_{year}-01-01_{year + 6}-01-01.json")
-        dfTest = dataparser.parseData(f"json_data/{instr}/{gran}/fold_{index}/{instr}_{gran}_{year + 6}-01-01_{year + 7}-01-01.json")
+    for fold in range(10):
+        # split dataframes
+        dfTrain = dataparser.splitByDate(df, datetime(yearNow - 16 + fold, 1, 1), datetime(yearNow - 9 + fold, 1, 1))
 
-        # TARGET VARIABLE: next candle return => positive (1) or negative (0)
-        for df in (dfTrain, dfTest):
-            df["target"] = (df["return"].shift(-1) > 0).astype(int) # boolean to integer
-            df.dropna(inplace=True)
+        # target variable: next candle return => positive (1) or negative (0)
+        dfTrain["target"] = (dfTrain["return"].shift(-1) > 0).astype(int) # boolean to integer
+        dfTrain.dropna(inplace=True)
         
-        # DEFINE DATASETS
+        # define datasets
         X_train = dfTrain[features]
         y_train = dfTrain["target"]
-        X_test = dfTest[features]
-        y_test = dfTest["target"]
 
-        # TRAIN MODEL
+        # train model
         model.fit(X_train, y_train)
 
-        # FEATURE IMPORTANCE
+        # feature importance
         importances = pd.Series(model.feature_importances_, index=features)
         # model.feature_importances_ returns numpy array (indicates how important each feature was by weight)
 
-        # ADD TO CUMULATIVE TEST SCORES
+        # add to cumulative score
         avgImportances += importances
 
     # RETURN TEST DATA

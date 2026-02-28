@@ -2,17 +2,19 @@ import xgboost as xgb
 from sklearn.metrics import accuracy_score, f1_score, roc_auc_score, confusion_matrix
 import pandas as pd
 from custom_modules import dataparser
+from datetime import datetime
 
 # PHASE 4: TRAIN AND EVALUATE FINAL MODEL
 yearNow = 2026
 instrument = "EUR_USD"
 granularity = "H1"
 
-# LOAD DATAFRAMES
-dfTrain = dataparser.parseData(f"json_data/{instrument}/{granularity}/all/{instrument}_{granularity}_{yearNow - 16}-01-01_{yearNow - 1}-01-01.json")
-dfTest = dataparser.parseData(f"json_data/{instrument}/{granularity}/all/{instrument}_{granularity}_{yearNow - 1}-01-01_{yearNow}-01-01.json")
+# LOAD AND SPLIT DATAFRAMES
+df = dataparser.parseData(f"json_data/{instrument}_{granularity}_{yearNow - 16}-01-01_{yearNow}-01-01.json")
+dfTrain = dataparser.splitByDate(df, datetime(yearNow - 16, 1, 1), datetime(yearNow - 1, 1, 1))
+dfTest = dataparser.splitByDate(df, datetime(yearNow - 1, 1, 1), datetime(yearNow, 1, 1))
 
-# DEFINE FEATURES
+# DEFINE FEATURES (use results from Phase 2)
 features = [
     "return", "hl_spread", "oc_spread", "body_ratio",
     "normalised_ema15", "normalised_ema50",
@@ -23,8 +25,8 @@ features = [
     "vol_ratio_lag1", "vol_ratio_lag2", "vol_ratio_lag3", "vol_ratio_lag4", "vol_ratio_lag5"
 ]
 
-# DEFINE HYPERPARAMETERS
-params={
+# DEFINE HYPERPARAMETERS (use results from Phase 3)
+params = {
     "n_estimators": 200,
     "max_depth": 4,
     "learning_rate": 0.05,
@@ -60,7 +62,7 @@ y_prob = model.predict_proba(X_test)[:, 1]
 
 # EVALUATE MODEL
 accuracy = accuracy_score(y_test, y_pred)*100
-f1Score = f1_score(y_test, y_pred)
+f1Score = f1_score(y_test, y_pred, average="macro")
 rocAucScore = roc_auc_score(y_test, y_prob)
 # precision: accuracy of positive predictions for each class (up/down)
 # recall: correctly identified positives / total true positives
@@ -73,7 +75,7 @@ cmatrix = confusion_matrix(y_test, y_pred)
 # returns 2x2 numpy array breaking down true/false positives/negatives
 cmatrixDf = pd.DataFrame(cmatrix, index=["Real -", "Real +"], columns=["Predict -", "Predict +"])
 print(f"Accuracy: {accuracy:.3f}%")
-print(f"F1 score: {f1Score:.5f}")
+print(f"F1 score (macro-averaged): {f1Score:.5f}")
 print(f"ROC-AUC score: {rocAucScore:.5f}")
 print(f"Confusion matrix: {cmatrixDf}")
 model.save_model(f"XGBoost_{instrument}_{granularity}_{yearNow}.json")

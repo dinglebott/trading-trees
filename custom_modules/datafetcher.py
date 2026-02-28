@@ -1,6 +1,6 @@
 # EXPORTS:
-# getData()
-# getDataLoop()
+# getData() saves a single batch of data and returns the file path
+# getDataLoop() saves many batches of data in 1 file
 import os
 from dotenv import load_dotenv
 import requests
@@ -26,7 +26,7 @@ baseUrl = "https://api-fxtrade.oanda.com" # access token generated from live acc
 
 
 # FETCH DATA ONCE (saves locally as JSON file)
-def getData(instr="EUR_USD", gran="H1", count=500):
+def getData(instr="EUR_USD", gran="H1", count=500, subfolder=""):
     # get response
     params = {
         "granularity": gran,
@@ -42,7 +42,7 @@ def getData(instr="EUR_USD", gran="H1", count=500):
     
     # save response
     data = response.json()
-    directory = f"json_data/{instr}/{gran}"
+    directory = f"json_data/{subfolder}"
     if not os.path.exists(directory):
         os.makedirs(directory)
     timestamp = datetime.now().strftime("%m%d-%H%M") # extract month date hour minute from datetime
@@ -120,7 +120,7 @@ def getDataLoop(
         time.sleep(0.5)
     
     # save to file
-    directory = f"json_data/{instr}/{gran}/{subfolder}"
+    directory = f"json_data/{subfolder}"
     if not os.path.exists(directory):
         os.makedirs(directory)
     filename = f"{instr}_{gran}_{start.strftime('%Y-%m-%d')}_{end.strftime('%Y-%m-%d')}.json"
