@@ -42,6 +42,7 @@ Bollinger band position => (C - lowerband) / (upperband - lowerband)
 
 
 ## HYPERPARAMETER TUNING
+Scoring metric: Macro-adjusted F1 score (see Explanation of metrics below)
 #### Variations tested:
 No. of trees:      [100, 200, 300]\
 Max tree depth:    [3, 4, 5, 6]\

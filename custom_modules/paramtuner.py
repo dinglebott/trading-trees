@@ -3,10 +3,19 @@
 import xgboost as xgb
 from sklearn.model_selection import TimeSeriesSplit, RandomizedSearchCV
 import pandas as pd
-import dataparser
+from . import dataparser
 from datetime import datetime
 
-def tuneHyperparams(yearNow, instr, gran, prunedFeatures=None):
+def tuneHyperparams(yearNow, instr, gran,
+                    features=[
+                            "return", "hl_spread", "oc_spread", "body_ratio",
+                            "normalised_ema15", "normalised_ema50",
+                            "rsi_14", "macd_hist",
+                            "atr_14", "bb_width",
+                            "vol_ratio", "bb_position",
+                            "return_lag1", "return_lag2", "return_lag3", "return_lag4", "return_lag5",
+                            "vol_ratio_lag1", "vol_ratio_lag2", "vol_ratio_lag3", "vol_ratio_lag4", "vol_ratio_lag5"
+                            ]):
     # SUBFOLD SPLIT (respects time order)
     tscv = TimeSeriesSplit(n_splits=5)
 
@@ -19,26 +28,6 @@ def tuneHyperparams(yearNow, instr, gran, prunedFeatures=None):
         "colsample_bytree": [0.7, 0.8, 1.0],
         "min_child_weight": [1, 3, 5]
     }
-
-    # DEFINE FEATURES
-    features = [
-        "return", "hl_spread", "oc_spread", "body_ratio",
-        "normalised_ema15", "normalised_ema50",
-        "rsi_14", "macd_hist",
-        "atr_14", "bb_width",
-        "vol_ratio", "bb_position",
-        "return_lag1", "return_lag2", "return_lag3", "return_lag4", "return_lag5",
-        "vol_ratio_lag1", "vol_ratio_lag2", "vol_ratio_lag3", "vol_ratio_lag4", "vol_ratio_lag5"
-    ]
-
-    # PRUNE FEATURES
-    if prunedFeatures is not None:
-        for ft in prunedFeatures:
-            try:
-                features.remove(ft)
-            except ValueError:
-                print("prunedFeatures must be a list/tuple of valid features")
-                break
     
     # LOAD DATAFRAME
     df = dataparser.parseData(f"json_data/{instr}_{gran}_{yearNow - 16}-01-01_{yearNow}-01-01.json")
@@ -65,7 +54,7 @@ def tuneHyperparams(yearNow, instr, gran, prunedFeatures=None):
             estimator=xgb.XGBClassifier(eval_metric="logloss", random_state=42),
             param_distributions=param_grid,
             n_iter=40, # tries 40 random combinations from param_grid
-            scoring="f1", # metric to evaluate by
+            scoring="f1_macro", # metric to evaluate by
             cv=tscv, # cross-validation method (the time-series split defined above)
             verbose=1, # print progress as folds complete
             n_jobs=-1, # uses all CPU cores

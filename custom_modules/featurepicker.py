@@ -2,7 +2,7 @@
 # evaluateFeatures() gets feature importances and returns as a Series
 import xgboost as xgb
 import pandas as pd
-import dataparser
+from . import dataparser
 from datetime import datetime
 
 def evaluateFeatures(yearNow, instr, gran,
@@ -59,4 +59,5 @@ def evaluateFeatures(yearNow, instr, gran,
 
     # RETURN TEST DATA
     avgImportances /= 10
+    avgImportances.sort_values(ascending=False, inplace=True)
     return avgImportances

@@ -16,7 +16,7 @@ The modules are then called by the top-level scripts to execute the code
 ## How to replicate
 Each of the top-level scripts (fetch_data, select_features, tune_params, train_model) contain 3 global variables (yearNow, instrument, granularity)\
 Change these accordingly if you want to build your own model using this framework\
-Note the features you want to remove after Phase 2, and pass them in the prunedFeatures argument for Phase 3\
+Note the features you want to keep after Phase 2, and pass them in the features argument for Phase 3\
 In Phase 4, set the final features and hyperparameters in the features and params variables respectively\
 Output for all phases is printed to the terminal, and the final model is automatically saved as a JSON file
 #### IMPORTANT:

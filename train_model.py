@@ -17,23 +17,21 @@ dfTest = dataparser.splitByDate(df, datetime(yearNow - 1, 1, 1), datetime(yearNo
 
 # DEFINE FEATURES (use results from Phase 2)
 features = [
-    "return", "hl_spread", "oc_spread", "body_ratio",
+    "return", "oc_spread", "body_ratio",
     "normalised_ema15", "normalised_ema50",
-    "rsi_14", "macd_hist",
-    "atr_14", "bb_width",
+    "rsi_14",
     "vol_ratio", "bb_position",
-    "return_lag1", "return_lag2", "return_lag3", "return_lag4", "return_lag5",
-    "vol_ratio_lag1", "vol_ratio_lag2", "vol_ratio_lag3", "vol_ratio_lag4", "vol_ratio_lag5"
+    "vol_ratio_lag1", "vol_ratio_lag3", "vol_ratio_lag4"
 ]
 
 # DEFINE HYPERPARAMETERS (use results from Phase 3)
 params = {
-    "n_estimators": 200,
-    "max_depth": 4,
-    "learning_rate": 0.05,
-    "subsample": 0.8,
-    "colsample_bytree": 0.8,
-    "min_child_weight": 3
+    "n_estimators": 300,
+    "max_depth": 5,
+    "learning_rate": 0.022,
+    "subsample": 0.76,
+    "colsample_bytree": 0.85,
+    "min_child_weight": 5
 }
 
 # TARGET VARIABLE: next candle return => positive (1) or negative (0)
