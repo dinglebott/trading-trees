@@ -28,6 +28,7 @@ The code fetches from the api-fxtrade.oanda.com live server, so if your key is f
 Open use_model.py and copy-paste the exact same features used in train_model.py into the features variable\
 Prediction and confidence is printed to the terminal\
 Remember to set the correct global variables (yearNow, instrument, granularity)\
+Also set the version number of the model you want (in the version variable)\
 Obviously make sure you have the correct model trained for your use case first
 
 ## Why???

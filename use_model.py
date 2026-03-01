@@ -6,6 +6,7 @@ import os
 yearNow = 2026
 instrument = "EUR_USD"
 granularity = "H1"
+version = 0
 
 # DEFINE FEATURES (copy-paste from the model training features exactly)
 features = [
@@ -16,7 +17,7 @@ features = [
 model = xgb.XGBClassifier()
 try:
     directory = "models"
-    filename = f"XGBoost_{instrument}_{granularity}_{yearNow}.json"
+    filename = f"XGBoost_{instrument}_{granularity}_{yearNow}_v{version}.json"
     filepath = os.path.join(directory, filename)
     model.load_model(filepath)
 except (xgb.core.XGBoostError, FileNotFoundError):
