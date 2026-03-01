@@ -15,7 +15,7 @@ def evaluateFeatures(yearNow, instr, gran,
                      "subsample": 0.8,
                      "colsample_bytree": 0.8,
                      "min_child_weight": 3
-                 }):
+                 }, n=5):
     # DEFINE FEATURES
     features = [
         "return", "hl_spread", "oc_spread", "body_ratio",
@@ -39,9 +39,9 @@ def evaluateFeatures(yearNow, instr, gran,
         dfTrain = dataparser.splitByDate(df, datetime(yearNow - 16 + fold, 1, 1), datetime(yearNow - 10 + fold, 1, 1))
         dfTest = dataparser.splitByDate(df, datetime(yearNow - 10 + fold, 1, 1), datetime(yearNow - 9 + fold, 1, 1))
 
-        # target variable: next 5 candles net return => positive (1) or negative (0)
+        # target variable: next n candles net return => positive (1) or negative (0)
         for dataset in (dfTrain, dfTest):
-            dataset["target"] = (dataset["close"].shift(-5) - dataset["close"] > 0).astype(int) # boolean to integer
+            dataset["target"] = (dataset["close"].shift(-n) - dataset["close"] > 0).astype(int) # boolean to integer
             dataset.dropna(inplace=True)
         
         # define datasets

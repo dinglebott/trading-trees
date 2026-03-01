@@ -14,7 +14,8 @@ The custom_modules folder contains most of the actual code as reusable functions
 The modules are then called by the top-level scripts to execute the code
 
 ## How to replicate
-Each of the top-level scripts (fetch_data, select_features, tune_params, train_model) contain 3 global variables (yearNow, instrument, granularity)\
+Each of the top-level scripts (fetch_data, select_features, tune_params, train_model) contain 4 global variables (yearNow, instrument, granularity, candlesAhead)\
+(candlesAhead determines the number of candles ahead for which the model predicts the net movement)\
 Change these accordingly if you want to build your own model using this framework\
 Note the features you want to keep after Phase 2, and pass them in the features argument for Phase 3\
 In Phase 4, set the final features and hyperparameters in the features and params variables respectively\
@@ -27,7 +28,7 @@ The code fetches from the api-fxtrade.oanda.com live server, so if your key is f
 ## How to use
 Open use_model.py and copy-paste the exact same features used in train_model.py into the features variable\
 Prediction and confidence is printed to the terminal\
-Remember to set the correct global variables (yearNow, instrument, granularity)\
+Remember to set the correct global variables (yearNow, instrument, granularity, candlesAhead)\
 Also set the version number of the model you want (in the version variable)\
 Obviously make sure you have the correct model trained for your use case first
 

@@ -6,9 +6,10 @@ import os
 yearNow = 2026
 instrument = "EUR_USD"
 granularity = "H1"
+candlesAhead = 5
 
 # uses all features and default hyperparameters
-shaps = featurepicker.evaluateFeatures(yearNow, instrument, granularity)
+shaps = featurepicker.evaluateFeatures(yearNow, instrument, granularity, n=candlesAhead)
 print(f"\n{shaps}")
 
 # save results to json

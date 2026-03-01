@@ -96,3 +96,20 @@ Recall (0-1) => Correctly predicted 1's / All real 1's
 **F1 score (macro-averaged):** 0.52151\
 **ROC-AUC score:** 0.52614\
 **Confusion matrix:** TN(1505), FP(1515), FN(1455), TP(1741)
+
+### Model 2.1
+*Changes from v2: Added reg_alpha and reg_lambda hyperparameters*\
+**Hyperparameters:** {\
+"n_estimators": 100,\
+"max_depth": 6,\
+"learning_rate": 0.062,\
+"subsample": 0.82,\
+"colsample_bytree": 0.9,\
+"min_child_weight": 5,\
+"reg_alpha": 1.741,\
+"reg_lambda": 12.61\
+}\
+**Accuracy:** 51.577%\
+**F1 score (macro-averaged):** 0.51493\
+**ROC-AUC score:** 0.52487\
+**Confusion matrix:** TN(1474), FP(1546), FN(1464), TP(1732)

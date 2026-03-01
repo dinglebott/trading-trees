@@ -15,7 +15,7 @@ def tuneHyperparams(yearNow, instr, gran,
                             "vol_ratio", "bb_position",
                             "return_lag1", "return_lag2", "return_lag3", "return_lag4", "return_lag5",
                             "vol_ratio_lag1", "vol_ratio_lag2", "vol_ratio_lag3", "vol_ratio_lag4", "vol_ratio_lag5"
-                            ]):
+                            ], n=5):
     # SUBFOLD SPLIT (respects time order)
     tscv = TimeSeriesSplit(n_splits=5)
 
@@ -33,16 +33,15 @@ def tuneHyperparams(yearNow, instr, gran,
     df = dataparser.parseData(f"json_data/{instr}_{gran}_{yearNow - 16}-01-01_{yearNow}-01-01.json")
 
     # INITIALISE CUMULATIVE RESULTS
-    hyperparams = ["n_estimators", "max_depth", "learning_rate", "subsample", "colsample_bytree", "min_child_weight"]
-    allResults = pd.DataFrame(columns=hyperparams)
+    allResults = pd.DataFrame(columns=list(param_grid.keys()))
 
     # LOOP TEST (builds a fresh model for each combination of hyperparameters)
     for fold in range(10):
         # split dataframes
         dfTrain = dataparser.splitByDate(df, datetime(yearNow - 16 + fold, 1, 1), datetime(yearNow - 9 + fold, 1, 1))
 
-        # target variable: next 5 candles net return => positive (1) or negative (0)
-        dfTrain["target"] = (dfTrain["close"].shift(-5) - dfTrain["close"] > 0).astype(int) # boolean to integer
+        # target variable: next n candles net return => positive (1) or negative (0)
+        dfTrain["target"] = (dfTrain["close"].shift(-n) - dfTrain["close"] > 0).astype(int) # boolean to integer
         dfTrain.dropna(inplace=True)
         
         # define datasets

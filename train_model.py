@@ -10,6 +10,7 @@ import os
 yearNow = 2026
 instrument = "EUR_USD"
 granularity = "H1"
+candlesAhead = 5
 
 # LOAD AND SPLIT DATAFRAMES
 df = dataparser.parseData(f"json_data/{instrument}_{granularity}_{yearNow - 16}-01-01_{yearNow}-01-01.json")
@@ -39,9 +40,9 @@ bestParams["max_depth"] = int(bestParams["max_depth"])
 bestParams["min_child_weight"] = int(bestParams["min_child_weight"])
 print("Best hyperparameters:", bestParams)
 
-# TARGET VARIABLE: next 5 candles net return => positive (1) or negative (0)
+# TARGET VARIABLE: next n candles net return => positive (1) or negative (0)
 for dataset in (dfTrain, dfTest):
-    dataset["target"] = (dataset["close"].shift(-5) - dataset["close"] > 0).astype(int) # boolean to integer
+    dataset["target"] = (dataset["close"].shift(-candlesAhead) - dataset["close"] > 0).astype(int) # boolean to integer
     dataset.dropna(inplace=True)
 
 # DEFINE DATASETS
