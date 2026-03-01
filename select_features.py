@@ -5,8 +5,8 @@ import os
 # PHASE 2: SELECT FEATURES
 yearNow = 2026
 instrument = "EUR_USD"
-granularity = "H1"
-candlesAhead = 5
+granularity = "H4"
+candlesAhead = 7
 
 # uses all features and default hyperparameters
 shaps = featurepicker.evaluateFeatures(yearNow, instrument, granularity, n=candlesAhead)

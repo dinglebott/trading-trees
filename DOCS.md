@@ -80,9 +80,7 @@ Recall (0-1) => Correctly predicted 1's / All real 1's
 **Confusion matrix:** TN(1765), FP(1322), FN(1672), TP(1457)
 
 ### Model 2
-**Target variable:** Net return of next 5 candles\
-**Train:** 2010 - 2024\
-**Test:** 2025\
+*Changes from v1: Target variable changed to net return of next 5 candles*\
 **Features:** ["atr_14", "body_ratio", "normalised_ema50", "vol_ratio_lag5", "bb_width", "rsi_14", "macd_hist", "vol_ratio_lag4", "bb_position", "vol_ratio", "normalised_ema15"]\
 **Hyperparameters:** {\
 "n_estimators": 100,\
@@ -113,3 +111,19 @@ Recall (0-1) => Correctly predicted 1's / All real 1's
 **F1 score (macro-averaged):** 0.51493\
 **ROC-AUC score:** 0.52487\
 **Confusion matrix:** TN(1474), FP(1546), FN(1464), TP(1732)
+
+### Model 2.2
+*Changes from v2: Granularity H4 and prediction changed to next 7 candles*\
+**Features:** ["normalised_ema50", "macd_hist", "atr_14", "bb_width", "bb_position", "rsi_14", "vol_ratio_lag2", "normalised_ema15", "vol_ratio_lag5", "vol_ratio_lag1", "return_lag3"]\
+**Hyperparameters:** {\
+"n_estimators": 200,\
+"max_depth": 6,\
+"learning_rate": 0.067,\
+"subsample": 0.78,\
+"colsample_bytree": 0.89,\
+"min_child_weight": 5\
+}\
+**Accuracy:** 49.292%\
+**F1 score (macro-averaged):** 0.49231\
+**ROC-AUC score:** 0.50226\
+**Confusion matrix:** TN(356), FP(412), FN(376), TP(410)

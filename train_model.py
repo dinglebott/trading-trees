@@ -9,8 +9,8 @@ import os
 # PHASE 4: TRAIN AND EVALUATE FINAL MODEL
 yearNow = 2026
 instrument = "EUR_USD"
-granularity = "H1"
-candlesAhead = 5
+granularity = "H4"
+candlesAhead = 7
 
 # LOAD AND SPLIT DATAFRAMES
 df = dataparser.parseData(f"json_data/{instrument}_{granularity}_{yearNow - 16}-01-01_{yearNow}-01-01.json")

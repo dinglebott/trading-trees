@@ -1,12 +1,10 @@
 {
     "Best value":{
-        "n_estimators":100.0,
+        "n_estimators":200.0,
         "max_depth":6.0,
-        "learning_rate":0.062,
-        "subsample":0.82,
-        "colsample_bytree":0.9,
-        "min_child_weight":5.0,
-        "reg_alpha":1.741,
-        "reg_lambda":12.61
+        "learning_rate":0.067,
+        "subsample":0.78,
+        "colsample_bytree":0.89,
+        "min_child_weight":5.0
     }
 }

@@ -5,8 +5,8 @@ import json
 # PHASE 3: TUNE HYPERPARAMETERS
 yearNow = 2026
 instrument = "EUR_USD"
-granularity = "H1"
-candlesAhead = 5
+granularity = "H4"
+candlesAhead = 7
 
 # select features from Phase 2
 directory = "results"
