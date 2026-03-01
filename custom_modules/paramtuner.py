@@ -41,8 +41,8 @@ def tuneHyperparams(yearNow, instr, gran,
         # split dataframes
         dfTrain = dataparser.splitByDate(df, datetime(yearNow - 16 + fold, 1, 1), datetime(yearNow - 9 + fold, 1, 1))
 
-        # target variable: next candle return => positive (1) or negative (0)
-        dfTrain["target"] = (dfTrain["return"].shift(-1) > 0).astype(int) # boolean to integer
+        # target variable: next 5 candles net return => positive (1) or negative (0)
+        dfTrain["target"] = (dfTrain["close"].shift(-5) - dfTrain["close"] > 0).astype(int) # boolean to integer
         dfTrain.dropna(inplace=True)
         
         # define datasets

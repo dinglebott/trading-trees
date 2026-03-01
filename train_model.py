@@ -3,6 +3,7 @@ from sklearn.metrics import accuracy_score, f1_score, roc_auc_score, confusion_m
 import pandas as pd
 from custom_modules import dataparser
 from datetime import datetime
+import json
 import os
 
 # PHASE 4: TRAIN AND EVALUATE FINAL MODEL
@@ -16,37 +17,41 @@ dfTrain = dataparser.splitByDate(df, datetime(yearNow - 16, 1, 1), datetime(year
 dfTest = dataparser.splitByDate(df, datetime(yearNow - 1, 1, 1), datetime(yearNow, 1, 1))
 
 # DEFINE FEATURES (use results from Phase 2)
-features = [
-    "return", "oc_spread", "body_ratio",
-    "normalised_ema15", "normalised_ema50",
-    "rsi_14",
-    "vol_ratio", "bb_position",
-    "vol_ratio_lag1", "vol_ratio_lag3", "vol_ratio_lag4"
-]
+directory = "results"
+filename = "feature_selection.json"
+filepath = os.path.join(directory, filename)
+# deserialise json data
+with open(filepath, "r") as file:
+    rawFeatures = json.load(file) # rawFeatures is a Python dict
+# extract top 11 features into list
+bestFeatures = list(rawFeatures.keys())[:11]
+print("Best features:", bestFeatures)
 
 # DEFINE HYPERPARAMETERS (use results from Phase 3)
-params = {
-    "n_estimators": 300,
-    "max_depth": 5,
-    "learning_rate": 0.022,
-    "subsample": 0.76,
-    "colsample_bytree": 0.85,
-    "min_child_weight": 5
-}
+filename = "hyperparameter_tuning.json"
+filepath = os.path.join(directory, filename)
+# deserialise json data
+with open(filepath, "r") as file:
+    bestParams = json.load(file)["Best value"] # rawParams is a Python dict
+# cast floats to ints where necessary
+bestParams["n_estimators"] = int(bestParams["n_estimators"])
+bestParams["max_depth"] = int(bestParams["max_depth"])
+bestParams["min_child_weight"] = int(bestParams["min_child_weight"])
+print("Best hyperparameters:", bestParams)
 
-# TARGET VARIABLE: next candle return => positive (1) or negative (0)
-for df in (dfTrain, dfTest):
-    df["target"] = (df["return"].shift(-1) > 0).astype(int) # boolean to integer
-    df.dropna(inplace=True)
+# TARGET VARIABLE: next 5 candles net return => positive (1) or negative (0)
+for dataset in (dfTrain, dfTest):
+    dataset["target"] = (dataset["close"].shift(-5) - dataset["close"] > 0).astype(int) # boolean to integer
+    dataset.dropna(inplace=True)
 
 # DEFINE DATASETS
-X_train = dfTrain[features]
+X_train = dfTrain[bestFeatures]
 y_train = dfTrain["target"]
-X_test = dfTest[features]
+X_test = dfTest[bestFeatures]
 y_test = dfTest["target"]
 
 # BUILD MODEL
-model = xgb.XGBClassifier(**params, eval_metric="logloss", random_state=42)
+model = xgb.XGBClassifier(**bestParams, eval_metric="logloss", random_state=42)
 
 # TRAIN MODEL
 model.fit(X_train, y_train)
@@ -76,7 +81,7 @@ cmatrixDf = pd.DataFrame(cmatrix, index=["Real -", "Real +"], columns=["Predict 
 print(f"Accuracy: {accuracy:.3f}%")
 print(f"F1 score (macro-averaged): {f1Score:.5f}")
 print(f"ROC-AUC score: {rocAucScore:.5f}")
-print(f"Confusion matrix: {cmatrixDf}")
+print(f"Confusion matrix:\n{cmatrixDf}")
 
 directory = "models"
 if not os.path.exists(directory):

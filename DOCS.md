@@ -60,7 +60,7 @@ ROC-AUC score (0-1) => Probability that a randomly chosen 1 is ranked higher tha
 Precision (0-1) => Correctly predicted 1's / All predicted 1's\
 Recall (0-1) => Correctly predicted 1's / All real 1's
 
-### Model 0
+### Model 1
 **Target variable:** Return of next candle\
 **Train:** 2010 - 2024\
 **Test:** 2025\
@@ -78,3 +78,21 @@ Recall (0-1) => Correctly predicted 1's / All real 1's
 **F1 score (macro-averaged):** 0.51715\
 **ROC-AUC score:** 0.52330\
 **Confusion matrix:** TN(1765), FP(1322), FN(1672), TP(1457)
+
+### Model 2
+**Target variable:** Net return of next 5 candles\
+**Train:** 2010 - 2024\
+**Test:** 2025\
+**Features:** ["atr_14", "body_ratio", "normalised_ema50", "vol_ratio_lag5", "bb_width", "rsi_14", "macd_hist", "vol_ratio_lag4", "bb_position", "vol_ratio", "normalised_ema15"]\
+**Hyperparameters:** {\
+"n_estimators": 100,\
+"max_depth": 4,\
+"learning_rate": 0.07,\
+"subsample": 0.78,\
+"colsample_bytree": 0.84,\
+"min_child_weight": 5\
+}\
+**Accuracy:** 52.220%\
+**F1 score (macro-averaged):** 0.52151\
+**ROC-AUC score:** 0.52614\
+**Confusion matrix:** TN(1505), FP(1515), FN(1455), TP(1741)

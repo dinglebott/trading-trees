@@ -6,7 +6,7 @@ import os
 yearNow = 2026
 instrument = "EUR_USD"
 granularity = "H1"
-version = 0
+version = 2
 
 # DEFINE FEATURES (copy-paste from the model training features exactly)
 features = [
