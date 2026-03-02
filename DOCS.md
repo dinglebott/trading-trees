@@ -63,110 +63,30 @@ ROC-AUC score (0-1) => Probability that a randomly chosen 1 is ranked higher tha
 Precision (0-1) => Correctly predicted 1's / All predicted 1's\
 Recall (0-1) => Correctly predicted 1's / All real 1's
 
-### Model 1
-**Target variable:** Return of next candle\
-**Train:** 2010 - 2024\
-**Test:** 2025\
-**Features:** ["return", "oc_spread", "body_ratio", "normalised_ema15", "normalised_ema50", "rsi_14", "vol_ratio", "bb_position", "vol_ratio_lag1", "vol_ratio_lag3", "vol_ratio_lag4"]\
-*(features selected by default Gini importance metric, subsequent models use SHAP)*\
+### Model 4.1
+*Changes from v4: Widened deadzone, tightened Optuna search space to reduce overfitting*\
+**Features:** ["atr_14", "vol_ratio_lag3", "bb_width", "normalised_ema50", "hl_spread", "vol_ratio_lag4", "vol_ratio_lag1", "rsi_14", "macd_hist", "vol_ratio", "bb_position"]\
 **Hyperparameters:** {\
-                    "n_estimators": 300,\
-                    "max_depth": 5,\
-                    "learning_rate": 0.022,\
-                    "subsample": 0.76,\
-                    "colsample_bytree": 0.85,\
-                    "min_child_weight": 5\
-                }\
-**Accuracy:** 51.834%\
-**F1 score (macro-averaged):** 0.51715\
-**ROC-AUC score:** 0.52330\
-**Confusion matrix:**
-| &nbsp; | Pred - | Pred + |
-| --- | --- | --- |
-| Real - | 1765 | 1322 |
-| Real + | 1672 | 1457 |
-
-### Model 2
-*Changes from v1: Target variable changed to net return of next 5 candles, feature selection metric changed to SHAP values*\
-**Features:** ["atr_14", "body_ratio", "normalised_ema50", "vol_ratio_lag5", "bb_width", "rsi_14", "macd_hist", "vol_ratio_lag4", "bb_position", "vol_ratio", "normalised_ema15"]\
-**Hyperparameters:** {\
-"n_estimators": 100,\
-"max_depth": 4,\
-"learning_rate": 0.07,\
-"subsample": 0.78,\
-"colsample_bytree": 0.84,\
-"min_child_weight": 5\
+"n_estimators": 600 *(100, 700)*,\
+"max_depth": 5 *(3, 5)*,\
+"learning_rate": 0.0810526073 *(0.005, 0.1)*,\
+"subsample": 0.5848394118 *(0.4, 0.8)*,\
+"colsample_bytree": 0.6241455026 *(0.4, 0.8)*,\
+"min_child_weight": 33 *(1, 100)*,\
+"reg_alpha": 0.4983704418 *(0.01, 5)*,\
+"reg_lambda": 10.5454424495 *(5, 20)*\
 }\
-**Accuracy:** 52.220%\
-**F1 score (macro-averaged):** 0.52151\
-**ROC-AUC score:** 0.52614\
-**Confusion matrix:**
-| &nbsp; | Pred - | Pred + |
-| --- | --- | --- |
-| Real - | 1505 | 1515 |
-| Real + | 1455 | 1741 |
-
-### Model 2.1
-*Changes from v2: Added reg_alpha and reg_lambda hyperparameters*\
-**Hyperparameters:** {\
-"n_estimators": 100,\
-"max_depth": 6,\
-"learning_rate": 0.062,\
-"subsample": 0.82,\
-"colsample_bytree": 0.9,\
-"min_child_weight": 5,\
-"reg_alpha": 1.741,\
-"reg_lambda": 12.61\
-}\
-**Accuracy:** 51.577%\
-**F1 score (macro-averaged):** 0.51493\
-**ROC-AUC score:** 0.52487\
-**Confusion matrix:**
-| &nbsp; | Pred - | Pred + |
-| --- | --- | --- |
-| Real - | 1474 | 1546 |
-| Real + | 1464 | 1732 |
-
-### Model 2.2
-*Changes from v2: Granularity H4 and prediction changed to next 7 candles*\
-**Features:** ["normalised_ema50", "macd_hist", "atr_14", "bb_width", "bb_position", "rsi_14", "vol_ratio_lag2", "normalised_ema15", "vol_ratio_lag5", "vol_ratio_lag1", "return_lag3"]\
-**Hyperparameters:** {\
-"n_estimators": 200,\
-"max_depth": 6,\
-"learning_rate": 0.067,\
-"subsample": 0.78,\
-"colsample_bytree": 0.89,\
-"min_child_weight": 5\
-}\
-**Accuracy:** 49.292%\
-**F1 score (macro-averaged):** 0.49231\
-**ROC-AUC score:** 0.50226\
-**Confusion matrix:**
-| &nbsp; | Pred - | Pred + |
-| --- | --- | --- |
-| Real - | 356 | 412 |
-| Real + | 376 | 410 |
-
-### Model 3
-*Changes from v2: Granularity H4, prediction changed to next 4 candles, added a third class "flat"*\
-**Features:** ["atr_14", "vol_ratio_lag3", "normalised_ema50", "bb_width", "rsi_14", "macd_hist", "vol_ratio_lag4", "hl_spread", "vol_ratio_lag1", "vol_ratio", "bb_position"]\
-**Hyperparameters:** {\
-"n_estimators": 200,\
-"max_depth": 4,\
-"learning_rate": 0.085,\
-"subsample": 0.88,\
-"colsample_bytree": 0.89,\
-"min_child_weight": 3\
-}\
-**Accuracy:** 39.097%\
-**F1 score (macro-averaged):** 0.33958\
-**ROC-AUC score:** 0.55234\
+*(Search spaces in italicised brackets)*\
+**Accuracy:** 44.581%\
+**F1 score (macro-averaged):** 0.35252\
+**F1 score (train set):** 0.60808\
+**ROC-AUC score:** 0.56264\
 **Confusion matrix:**
 | &nbsp; | Pred - | Pred ~ | Pred + |
 | --- | --- | --- | --- |
-| Real - | 241 | 23 | 301 |
-| Real ~ | 121 | 37 | 225 |
-| Real + | 239 | 35 | 328 |
+| Real - | 66 | 259 | 51 |
+| Real ~ | 92 | 543 | 87 |
+| Real + | 92 | 278 | 82 |
 
 ### Model 4
 *Changes from v3: Switched to Optuna for hyperparameter tuning instead of RandomizedSearchCV*\
@@ -193,27 +113,107 @@ Recall (0-1) => Correctly predicted 1's / All real 1's
 | Real ~ | 143 | 37 | 203 |
 | Real + | 232 | 43 | 327 |
 
-### Model 4.1
-*Changes from v4: Widened deadzone, tightened Optuna search space to reduce overfitting*\
-**Features:** ["atr_14", "vol_ratio_lag3", "bb_width", "normalised_ema50", "hl_spread", "vol_ratio_lag4", "vol_ratio_lag1", "rsi_14", "macd_hist", "vol_ratio", "bb_position"]\
+### Model 3
+*Changes from v2: Granularity H4, prediction changed to next 4 candles, added a third class "flat"*\
+**Features:** ["atr_14", "vol_ratio_lag3", "normalised_ema50", "bb_width", "rsi_14", "macd_hist", "vol_ratio_lag4", "hl_spread", "vol_ratio_lag1", "vol_ratio", "bb_position"]\
 **Hyperparameters:** {\
-"n_estimators": 600 *(100, 700)*,\
-"max_depth": 5 *(3, 5)*,\
-"learning_rate": 0.0810526073 *(0.005, 0.1)*,\
-"subsample": 0.5848394118 *(0.4, 0.8)*,\
-"colsample_bytree": 0.6241455026 *(0.4, 0.8)*,\
-"min_child_weight": 33 *(1, 100)*,\
-"reg_alpha": 0.4983704418 *(0.01, 5)*,\
-"reg_lambda": 10.5454424495 *(5, 20)*\
+"n_estimators": 200,\
+"max_depth": 4,\
+"learning_rate": 0.085,\
+"subsample": 0.88,\
+"colsample_bytree": 0.89,\
+"min_child_weight": 3\
 }\
-*(Search spaces in italicised brackets)*\
-**Accuracy:** 44.581%\
-**F1 score (macro-averaged):** 0.35252\
-**F1 score (train set):** 0.60808\
-**ROC-AUC score:** 0.56264\
+**Accuracy:** 39.097%\
+**F1 score (macro-averaged):** 0.33958\
+**ROC-AUC score:** 0.55234\
 **Confusion matrix:**
 | &nbsp; | Pred - | Pred ~ | Pred + |
 | --- | --- | --- | --- |
-| Real - | 66 | 259 | 51 |
-| Real ~ | 92 | 543 | 87 |
-| Real + | 92 | 278 | 82 |
+| Real - | 241 | 23 | 301 |
+| Real ~ | 121 | 37 | 225 |
+| Real + | 239 | 35 | 328 |
+
+### Model 2.2
+*Changes from v2: Granularity H4 and prediction changed to next 7 candles*\
+**Features:** ["normalised_ema50", "macd_hist", "atr_14", "bb_width", "bb_position", "rsi_14", "vol_ratio_lag2", "normalised_ema15", "vol_ratio_lag5", "vol_ratio_lag1", "return_lag3"]\
+**Hyperparameters:** {\
+"n_estimators": 200,\
+"max_depth": 6,\
+"learning_rate": 0.067,\
+"subsample": 0.78,\
+"colsample_bytree": 0.89,\
+"min_child_weight": 5\
+}\
+**Accuracy:** 49.292%\
+**F1 score (macro-averaged):** 0.49231\
+**ROC-AUC score:** 0.50226\
+**Confusion matrix:**
+| &nbsp; | Pred - | Pred + |
+| --- | --- | --- |
+| Real - | 356 | 412 |
+| Real + | 376 | 410 |
+
+### Model 2.1
+*Changes from v2: Added reg_alpha and reg_lambda hyperparameters*\
+**Hyperparameters:** {\
+"n_estimators": 100,\
+"max_depth": 6,\
+"learning_rate": 0.062,\
+"subsample": 0.82,\
+"colsample_bytree": 0.9,\
+"min_child_weight": 5,\
+"reg_alpha": 1.741,\
+"reg_lambda": 12.61\
+}\
+**Accuracy:** 51.577%\
+**F1 score (macro-averaged):** 0.51493\
+**ROC-AUC score:** 0.52487\
+**Confusion matrix:**
+| &nbsp; | Pred - | Pred + |
+| --- | --- | --- |
+| Real - | 1474 | 1546 |
+| Real + | 1464 | 1732 |
+
+### Model 2
+*Changes from v1: Target variable changed to net return of next 5 candles, feature selection metric changed to SHAP values*\
+**Features:** ["atr_14", "body_ratio", "normalised_ema50", "vol_ratio_lag5", "bb_width", "rsi_14", "macd_hist", "vol_ratio_lag4", "bb_position", "vol_ratio", "normalised_ema15"]\
+**Hyperparameters:** {\
+"n_estimators": 100,\
+"max_depth": 4,\
+"learning_rate": 0.07,\
+"subsample": 0.78,\
+"colsample_bytree": 0.84,\
+"min_child_weight": 5\
+}\
+**Accuracy:** 52.220%\
+**F1 score (macro-averaged):** 0.52151\
+**ROC-AUC score:** 0.52614\
+**Confusion matrix:**
+| &nbsp; | Pred - | Pred + |
+| --- | --- | --- |
+| Real - | 1505 | 1515 |
+| Real + | 1455 | 1741 |
+
+### Model 1
+**Target variable:** Return of next candle\
+**Train:** 2010 - 2024\
+**Test:** 2025\
+**Features:** ["return", "oc_spread", "body_ratio", "normalised_ema15", "normalised_ema50", "rsi_14", "vol_ratio", "bb_position", "vol_ratio_lag1", "vol_ratio_lag3", "vol_ratio_lag4"]\
+*(features selected by default Gini importance metric, subsequent models use SHAP)*\
+**Hyperparameters:** {\
+                    "n_estimators": 300,\
+                    "max_depth": 5,\
+                    "learning_rate": 0.022,\
+                    "subsample": 0.76,\
+                    "colsample_bytree": 0.85,\
+                    "min_child_weight": 5\
+                }\
+**Accuracy:** 51.834%\
+**F1 score (macro-averaged):** 0.51715\
+**ROC-AUC score:** 0.52330\
+**Confusion matrix:**
+| &nbsp; | Pred - | Pred + |
+| --- | --- | --- |
+| Real - | 1765 | 1322 |
+| Real + | 1672 | 1457 |
