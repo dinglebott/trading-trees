@@ -6,8 +6,8 @@ import json
 # GLOBAL VARIABLES
 yearNow = 2026
 instrument = "EUR_USD"
-granularity = "H1"
-version = 2
+granularity = "H4"
+version = 4
 
 # DEFINE FEATURES (copy-paste from the model training features exactly)
 directory = "results"
@@ -41,10 +41,10 @@ probabilities = model.predict_proba(latestCandle)[0] # gets the only row of the 
 # DISPLAY RESULTS
 match prediction:
     case 0:
-        finalPrediction = "DOWN"
+        predictionLabel = "DOWN"
     case 1:
-        finalPrediction = "FLAT"
+        predictionLabel = "FLAT"
     case 2:
-        finalPrediction = "UP"
-print(f"Prediction: {finalPrediction}")
-print(f"Confidence: {max(probabilities)*100:.2f}%")
+        predictionLabel = "UP"
+print(f"Prediction: {predictionLabel}")
+print(f"Confidence: {probabilities.max()*100:.2f}%")

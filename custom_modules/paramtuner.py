@@ -53,13 +53,13 @@ def tuneHyperparams(yearNow, instr, gran,
                 "num_class": 3, # no. of classes
                 "eval_metric": "mlogloss", # multiclass log loss
                 "n_estimators": trial.suggest_int("n_estimators", 100, 700, step=50),
-                "max_depth": trial.suggest_int("max_depth", 3, 6),
+                "max_depth": trial.suggest_int("max_depth", 3, 5),
                 "learning_rate": trial.suggest_float("learning_rate", 0.005, 0.1, log=True),
-                "subsample": trial.suggest_float("subsample", 0.5, 1.0),
-                "colsample_bytree": trial.suggest_float("colsample_bytree", 0.5, 1.0),
+                "subsample": trial.suggest_float("subsample", 0.4, 0.8),
+                "colsample_bytree": trial.suggest_float("colsample_bytree", 0.4, 0.8),
                 "min_child_weight": trial.suggest_int("min_child_weight", 1, 100),
                 "reg_alpha": trial.suggest_float("reg_alpha", 0.01, 5, log=True),
-                "reg_lambda": trial.suggest_float("reg_lambda", 1, 20, log=True),
+                "reg_lambda": trial.suggest_float("reg_lambda", 5, 20, log=True),
                 "tree_method": "approx",  # use "exact" for slower more accurate training, "hist" for faster training, "approx" for medium
                 "random_state": 42,
             }

@@ -37,7 +37,7 @@ def evaluateFeatures(yearNow, instr, gran,
 
     # LOOP TEST THROUGH ALL FOLDS
     for fold in range(10):
-        print(f"Starting fold {fold + 1}...")
+        print(f"\nStarting fold {fold + 1}...")
         # split dataframes
         dfTrain = dataparser.splitByDate(df, datetime(yearNow - 16 + fold, 1, 1), datetime(yearNow - 10 + fold, 1, 1))
         dfTest = dataparser.splitByDate(df, datetime(yearNow - 10 + fold, 1, 1), datetime(yearNow - 9 + fold, 1, 1))

@@ -87,7 +87,7 @@ Recall (0-1) => Correctly predicted 1's / All real 1's
 | Real + | 1672 | 1457 |
 
 ### Model 2
-*Changes from v1: Target variable changed to net return of next 5 candles*\
+*Changes from v1: Target variable changed to net return of next 5 candles, feature selection metric changed to SHAP values*\
 **Features:** ["atr_14", "body_ratio", "normalised_ema50", "vol_ratio_lag5", "bb_width", "rsi_14", "macd_hist", "vol_ratio_lag4", "bb_position", "vol_ratio", "normalised_ema15"]\
 **Hyperparameters:** {\
 "n_estimators": 100,\
@@ -172,17 +172,19 @@ Recall (0-1) => Correctly predicted 1's / All real 1's
 *Changes from v3: Switched to Optuna for hyperparameter tuning instead of RandomizedSearchCV*\
 **Features:** ["atr_14", "vol_ratio_lag3", "normalised_ema50", "bb_width", "vol_ratio_lag4", "rsi_14", "vol_ratio_lag1", "macd_hist", "hl_spread", "vol_ratio", "return_lag4"]\
 **Hyperparameters:** {\
-"n_estimators": 570,\
-"max_depth": 5,\
-"learning_rate": 0.0515499473,\
-"subsample": 0.7123781799,\
-"colsample_bytree": 0.8614535802,\
-"min_child_weight": 37,\
-"reg_alpha": 0.8768283771,\
-"reg_lambda": 4.1420416058
+"n_estimators": 570 *(100, 700)*,\
+"max_depth": 5 *(3, 6)*,\
+"learning_rate": 0.0515499473 *(0.005, 0.1)*,\
+"subsample": 0.7123781799 *(0.5, 1.0)*,\
+"colsample_bytree": 0.8614535802 *(0.5, 1.0)*,\
+"min_child_weight": 37 *(1, 100)*,\
+"reg_alpha": 0.8768283771 *(0.01, 5)*,\
+"reg_lambda": 4.1420416058 *(1, 20)*
 }\
+*(Search spaces in italicised brackets)*\
 **Accuracy:** 38.323%\
 **F1 score (macro-averaged):** 0.33282\
+**F1 score (train set):** 0.59334\
 **ROC-AUC score:** 0.53686\
 **Confusion matrix:**\
 | &nbsp; | Pred - | Pred ~ | Pred + |
@@ -190,3 +192,28 @@ Recall (0-1) => Correctly predicted 1's / All real 1's
 | Real - | 230 | 35 | 300 |
 | Real ~ | 143 | 37 | 203 |
 | Real + | 232 | 43 | 327 |
+
+### Model 4.1
+*Changes from v4: Widened deadzone, tightened Optuna search space to reduce overfitting*\
+**Features:** ["atr_14", "vol_ratio_lag3", "bb_width", "normalised_ema50", "hl_spread", "vol_ratio_lag4", "vol_ratio_lag1", "rsi_14", "macd_hist", "vol_ratio", "bb_position"]\
+**Hyperparameters:** {\
+"n_estimators": 600 *(100, 700)*,\
+"max_depth": 5 *(3, 5)*,\
+"learning_rate": 0.0810526073 *(0.005, 0.1)*,\
+"subsample": 0.5848394118 *(0.4, 0.8)*,\
+"colsample_bytree": 0.6241455026 *(0.4, 0.8)*,\
+"min_child_weight": 33 *(1, 100)*,\
+"reg_alpha": 0.4983704418 *(0.01, 5)*,\
+"reg_lambda": 10.5454424495 *(5, 20)*
+}\
+*(Search spaces in italicised brackets)*\
+**Accuracy:** 44.581%\
+**F1 score (macro-averaged):** 0.35252\
+**F1 score (train set):** 0.60808\
+**ROC-AUC score:** 0.56264\
+**Confusion matrix:**\
+| &nbsp; | Pred - | Pred ~ | Pred + |
+| --- | --- | --- | --- |
+| Real - | 66 | 259 | 51 |
+| Real ~ | 92 | 543 | 87 |
+| Real + | 92 | 278 | 82 |
