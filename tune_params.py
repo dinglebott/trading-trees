@@ -7,7 +7,8 @@ yearNow = 2026
 instrument = "EUR_USD"
 granularity = "H4"
 candlesAhead = 4
-threshold = 0.001
+deadzone = 0.001
+midThreshold = 0
 
 # select features from Phase 2
 directory = "results"
@@ -21,7 +22,7 @@ bestFeatures = list(rawFeatures.keys())[:11]
 print("Best features:", bestFeatures)
 
 # pass to hyperparameter tuner
-allResults, finalParams = paramtuner.tuneHyperparams(yearNow, instrument, granularity, bestFeatures, n=candlesAhead, threshold=threshold)
+allResults, finalParams = paramtuner.tuneHyperparams(yearNow, instrument, granularity, bestFeatures, n=candlesAhead, deadzone=deadzone, midThreshold=midThreshold)
 print("\nAll results:")
 print(allResults)
 print("\nFinal hyperparameters:")

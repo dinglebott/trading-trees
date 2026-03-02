@@ -7,10 +7,11 @@ yearNow = 2026
 instrument = "EUR_USD"
 granularity = "H4"
 candlesAhead = 4
-threshold = 0.001
+deadzone = 0.001
+midThreshold = 0
 
 # uses all features and default hyperparameters
-shaps = featurepicker.evaluateFeatures(yearNow, instrument, granularity, n=candlesAhead, threshold=threshold)
+shaps = featurepicker.evaluateFeatures(yearNow, instrument, granularity, n=candlesAhead, deadzone=deadzone, midThreshold=midThreshold)
 print(f"\n{shaps}")
 
 # save results to json

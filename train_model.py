@@ -12,7 +12,8 @@ yearNow = 2026
 instrument = "EUR_USD"
 granularity = "H4"
 candlesAhead = 4
-threshold = 0.001
+deadzone = 0.001
+midThreshold = 0
 
 # LOAD AND SPLIT DATAFRAMES
 df = dataparser.parseData(f"json_data/{instrument}_{granularity}_{yearNow - 16}-01-01_{yearNow}-01-01.json")
@@ -46,8 +47,8 @@ print("Best hyperparameters:", bestParams)
 for dataset in (dfTrain, dfTest):
     dataset["forward_return"] = (dataset["close"].shift(-candlesAhead) / dataset["close"]) - 1
     conditions = [
-        dataset["forward_return"] < -threshold, # downward move
-        dataset["forward_return"] > threshold # upward move
+        dataset["forward_return"] < midThreshold - deadzone, # downward move
+        dataset["forward_return"] > midThreshold + deadzone # upward move
     ]
     choices = [0, 2]
     dataset["target"] = np.select(conditions, choices, default=1) # if not up or down, return flat (1)

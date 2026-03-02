@@ -78,7 +78,7 @@ Recall (0-1) => Correctly predicted 1's / All real 1's
 **F1 score (macro-averaged):** 0.51715\
 **ROC-AUC score:** 0.52330\
 **Confusion matrix:**\
-| --- | Pred - | Pred + |
+| &nbsp; | Pred - | Pred + |
 | --- | --- | --- |
 | Real - | 1765 | 1322 |
 | Real + | 1672 | 1457 |
@@ -98,7 +98,7 @@ Recall (0-1) => Correctly predicted 1's / All real 1's
 **F1 score (macro-averaged):** 0.52151\
 **ROC-AUC score:** 0.52614\
 **Confusion matrix:**\
-| --- | Pred - | Pred + |
+| &nbsp; | Pred - | Pred + |
 | --- | --- | --- |
 | Real - | 1505 | 1515 |
 | Real + | 1455 | 1741 |
@@ -119,7 +119,7 @@ Recall (0-1) => Correctly predicted 1's / All real 1's
 **F1 score (macro-averaged):** 0.51493\
 **ROC-AUC score:** 0.52487\
 **Confusion matrix:**\
-| --- | Pred - | Pred + |
+| &nbsp; | Pred - | Pred + |
 | --- | --- | --- |
 | Real - | 1474 | 1546 |
 | Real + | 1464 | 1732 |
@@ -139,7 +139,7 @@ Recall (0-1) => Correctly predicted 1's / All real 1's
 **F1 score (macro-averaged):** 0.49231\
 **ROC-AUC score:** 0.50226\
 **Confusion matrix:**\
-| | Pred - | Pred + |
+| &nbsp; | Pred - | Pred + |
 | --- | --- | --- |
 | Real - | 356 | 412 |
 | Real + | 376 | 410 |

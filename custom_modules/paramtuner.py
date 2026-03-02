@@ -2,6 +2,7 @@
 # tuneHyperparams() returns DataFrame of results from all folds, and DataFrame of final selected params
 import xgboost as xgb
 from sklearn.model_selection import TimeSeriesSplit, RandomizedSearchCV
+import optuna
 import pandas as pd
 import numpy as np
 from . import dataparser
@@ -16,7 +17,7 @@ def tuneHyperparams(yearNow, instr, gran,
                             "vol_ratio", "bb_position",
                             "return_lag1", "return_lag2", "return_lag3", "return_lag4", "return_lag5",
                             "vol_ratio_lag1", "vol_ratio_lag2", "vol_ratio_lag3", "vol_ratio_lag4", "vol_ratio_lag5"
-                            ], n=5, threshold=0.001):
+                            ], n=5, deadzone=0.001, midThreshold=0):
     # SUBFOLD SPLIT (respects time order)
     tscv = TimeSeriesSplit(n_splits=5)
 
@@ -44,8 +45,8 @@ def tuneHyperparams(yearNow, instr, gran,
         # target variable: next n candles net return => negative (0), flat (1), positive (2)
         dfTrain["forward_return"] = (dfTrain["close"].shift(-n) / dfTrain["close"]) - 1
         conditions = [
-            dfTrain["forward_return"] < -threshold, # downward move
-            dfTrain["forward_return"] > threshold # upward move
+            dfTrain["forward_return"] < midThreshold - deadzone, # downward move
+            dfTrain["forward_return"] > midThreshold + deadzone # upward move
         ]
         choices = [0, 2]
         dfTrain["target"] = np.select(conditions, choices, default=1) # if not up or down, return flat (1)

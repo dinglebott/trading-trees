@@ -15,7 +15,7 @@ def evaluateFeatures(yearNow, instr, gran,
                      "subsample": 0.8,
                      "colsample_bytree": 0.8,
                      "min_child_weight": 5
-                 }, n=5, threshold=0.001):
+                 }, n=5, deadzone=0.001, midThreshold=0):
     # DEFINE FEATURES
     features = [
         "return", "hl_spread", "oc_spread", "body_ratio",
@@ -43,8 +43,8 @@ def evaluateFeatures(yearNow, instr, gran,
         for dataset in (dfTrain, dfTest):
             dataset["forward_return"] = (dataset["close"].shift(-n) / dataset["close"]) - 1
             conditions = [
-                dataset["forward_return"] < -threshold, # downward move
-                dataset["forward_return"] > threshold # upward move
+                dataset["forward_return"] < midThreshold - deadzone, # downward move
+                dataset["forward_return"] > midThreshold + deadzone # upward move
             ]
             choices = [0, 2]
             dataset["target"] = np.select(conditions, choices, default=1) # if not up or down, return flat (1)
