@@ -11,7 +11,7 @@ Train: 2010-2015, Test: 2016\
 Train: 2011-2016, Test: 2017\
 ...\
 Train: 2019-2024, Test: 2025\
-**Hyperparameter tuning (Optuna, ):**\
+**Hyperparameter tuning (Optuna):**\
 5 folds of 7-year rolling windows (advance by 2 years per fold)\
 2011-2017, 2013-2019, ..., 2019-2025\
 Cross-validation performed by dividing into subfolds\
@@ -80,7 +80,7 @@ Recall (0-1) => Correctly predicted 1's / All real 1's
 **Accuracy:** 51.834%\
 **F1 score (macro-averaged):** 0.51715\
 **ROC-AUC score:** 0.52330\
-**Confusion matrix:**\
+**Confusion matrix:**
 | &nbsp; | Pred - | Pred + |
 | --- | --- | --- |
 | Real - | 1765 | 1322 |
@@ -100,7 +100,7 @@ Recall (0-1) => Correctly predicted 1's / All real 1's
 **Accuracy:** 52.220%\
 **F1 score (macro-averaged):** 0.52151\
 **ROC-AUC score:** 0.52614\
-**Confusion matrix:**\
+**Confusion matrix:**
 | &nbsp; | Pred - | Pred + |
 | --- | --- | --- |
 | Real - | 1505 | 1515 |
@@ -121,7 +121,7 @@ Recall (0-1) => Correctly predicted 1's / All real 1's
 **Accuracy:** 51.577%\
 **F1 score (macro-averaged):** 0.51493\
 **ROC-AUC score:** 0.52487\
-**Confusion matrix:**\
+**Confusion matrix:**
 | &nbsp; | Pred - | Pred + |
 | --- | --- | --- |
 | Real - | 1474 | 1546 |
@@ -141,7 +141,7 @@ Recall (0-1) => Correctly predicted 1's / All real 1's
 **Accuracy:** 49.292%\
 **F1 score (macro-averaged):** 0.49231\
 **ROC-AUC score:** 0.50226\
-**Confusion matrix:**\
+**Confusion matrix:**
 | &nbsp; | Pred - | Pred + |
 | --- | --- | --- |
 | Real - | 356 | 412 |
@@ -161,7 +161,7 @@ Recall (0-1) => Correctly predicted 1's / All real 1's
 **Accuracy:** 39.097%\
 **F1 score (macro-averaged):** 0.33958\
 **ROC-AUC score:** 0.55234\
-**Confusion matrix:**\
+**Confusion matrix:**
 | &nbsp; | Pred - | Pred ~ | Pred + |
 | --- | --- | --- | --- |
 | Real - | 241 | 23 | 301 |
@@ -179,14 +179,14 @@ Recall (0-1) => Correctly predicted 1's / All real 1's
 "colsample_bytree": 0.8614535802 *(0.5, 1.0)*,\
 "min_child_weight": 37 *(1, 100)*,\
 "reg_alpha": 0.8768283771 *(0.01, 5)*,\
-"reg_lambda": 4.1420416058 *(1, 20)*
+"reg_lambda": 4.1420416058 *(1, 20)*\
 }\
 *(Search spaces in italicised brackets)*\
 **Accuracy:** 38.323%\
 **F1 score (macro-averaged):** 0.33282\
 **F1 score (train set):** 0.59334\
 **ROC-AUC score:** 0.53686\
-**Confusion matrix:**\
+**Confusion matrix:**
 | &nbsp; | Pred - | Pred ~ | Pred + |
 | --- | --- | --- | --- |
 | Real - | 230 | 35 | 300 |
@@ -204,14 +204,14 @@ Recall (0-1) => Correctly predicted 1's / All real 1's
 "colsample_bytree": 0.6241455026 *(0.4, 0.8)*,\
 "min_child_weight": 33 *(1, 100)*,\
 "reg_alpha": 0.4983704418 *(0.01, 5)*,\
-"reg_lambda": 10.5454424495 *(5, 20)*
+"reg_lambda": 10.5454424495 *(5, 20)*\
 }\
 *(Search spaces in italicised brackets)*\
 **Accuracy:** 44.581%\
 **F1 score (macro-averaged):** 0.35252\
 **F1 score (train set):** 0.60808\
 **ROC-AUC score:** 0.56264\
-**Confusion matrix:**\
+**Confusion matrix:**
 | &nbsp; | Pred - | Pred ~ | Pred + |
 | --- | --- | --- | --- |
 | Real - | 66 | 259 | 51 |
