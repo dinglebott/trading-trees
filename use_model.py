@@ -1,6 +1,7 @@
 import xgboost as xgb
 from custom_modules import datafetcher, dataparser
 import os
+import json
 
 # GLOBAL VARIABLES
 yearNow = 2026
@@ -9,9 +10,14 @@ granularity = "H1"
 version = 2
 
 # DEFINE FEATURES (copy-paste from the model training features exactly)
-features = [
-
-]
+directory = "results"
+filename = f"features_v{version}.json"
+filepath = os.path.join(directory, filename)
+# deserialise json data
+with open(filepath, "r") as file:
+    rawFeatures = json.load(file) # rawFeatures is a Python dict
+# extract top 11 features into list
+features = list(rawFeatures.keys())[:11]
 
 # LOAD MODEL
 model = xgb.XGBClassifier()
@@ -29,9 +35,16 @@ df = dataparser.parseData(jsonPath)
 
 # GET PREDICTION
 latestCandle = df[features].iloc[[-1]] # slice out last row (last candle)
-prediction = model.predict(latestCandle)[0] # gets the only element of the 1D numpy array
-probabilities = model.predict_proba(latestCandle)[0] # gets the only row of the 2D numpy array [P(0), P(1)]
+prediction = model.predict(latestCandle)[0] # gets the only element of the 1D numpy array [n_samples]
+probabilities = model.predict_proba(latestCandle)[0] # gets the only row of the 2D numpy array [n_samples, n_classes]
 
 # DISPLAY RESULTS
-print("Prediction:", "UP" if prediction == 1 else "DOWN")
+match prediction:
+    case 0:
+        finalPrediction = "DOWN"
+    case 1:
+        finalPrediction = "FLAT"
+    case 2:
+        finalPrediction = "UP"
+print(f"Prediction: {finalPrediction}")
 print(f"Confidence: {max(probabilities)*100:.2f}%")

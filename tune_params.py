@@ -6,13 +6,13 @@ import json
 yearNow = 2026
 instrument = "EUR_USD"
 granularity = "H4"
-candlesAhead = 4
-deadzone = 0.001
-midThreshold = 0
+candlesAhead = 4 # model predicts net return of the next n candles
+deadzone = 0.001 # defines width of the "flat" class
+midThreshold = 0 # defines midpoint from which to split "up" and "down" classes
 
 # select features from Phase 2
 directory = "results"
-filename = "feature_selection.json"
+filename = "features.json"
 filepath = os.path.join(directory, filename)
 # deserialise json data
 with open(filepath, "r") as file:
@@ -22,16 +22,14 @@ bestFeatures = list(rawFeatures.keys())[:11]
 print("Best features:", bestFeatures)
 
 # pass to hyperparameter tuner
-allResults, finalParams = paramtuner.tuneHyperparams(yearNow, instrument, granularity, bestFeatures, n=candlesAhead, deadzone=deadzone, midThreshold=midThreshold)
-print("\nAll results:")
-print(allResults)
+finalParams = paramtuner.tuneHyperparams(yearNow, instrument, granularity, bestFeatures, n=candlesAhead, deadzone=deadzone, midThreshold=midThreshold)
 print("\nFinal hyperparameters:")
-print(finalParams)
+print(finalParams) # pd Series
 
 # save results to json
 directory = "results"
 if not os.path.exists(directory):
     os.makedirs(directory)
-filename = "hyperparameter_tuning.json"
+filename = "hyperparameters.json"
 filepath = os.path.join(directory, filename)
 finalParams.to_json(filepath, indent=4)

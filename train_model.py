@@ -11,9 +11,9 @@ import os
 yearNow = 2026
 instrument = "EUR_USD"
 granularity = "H4"
-candlesAhead = 4
-deadzone = 0.001
-midThreshold = 0
+candlesAhead = 4 # model predicts net return of the next n candles
+deadzone = 0.001 # defines width of the "flat" class
+midThreshold = 0 # defines midpoint from which to split "up" and "down" classes
 
 # LOAD AND SPLIT DATAFRAMES
 df = dataparser.parseData(f"json_data/{instrument}_{granularity}_{yearNow - 16}-01-01_{yearNow}-01-01.json")
@@ -22,7 +22,7 @@ dfTest = dataparser.splitByDate(df, datetime(yearNow - 1, 1, 1), datetime(yearNo
 
 # DEFINE FEATURES (use results from Phase 2)
 directory = "results"
-filename = "feature_selection.json"
+filename = "features.json"
 filepath = os.path.join(directory, filename)
 # deserialise json data
 with open(filepath, "r") as file:
@@ -32,11 +32,11 @@ bestFeatures = list(rawFeatures.keys())[:11]
 print("Best features:", bestFeatures)
 
 # DEFINE HYPERPARAMETERS (use results from Phase 3)
-filename = "hyperparameter_tuning.json"
+filename = "hyperparameters.json"
 filepath = os.path.join(directory, filename)
 # deserialise json data
 with open(filepath, "r") as file:
-    bestParams = json.load(file)["Best value"] # rawParams is a Python dict
+    bestParams = json.load(file) # bestParams is a Python dict
 # cast floats to ints where necessary
 bestParams["n_estimators"] = int(bestParams["n_estimators"])
 bestParams["max_depth"] = int(bestParams["max_depth"])
@@ -61,22 +61,24 @@ X_test = dfTest[bestFeatures]
 y_test = dfTest["target"]
 
 # BUILD MODEL
-model = xgb.XGBClassifier(**bestParams, eval_metric="logloss", random_state=42)
+model = xgb.XGBClassifier(**bestParams, eval_metric="mlogloss", random_state=42)
 
 # TRAIN MODEL
 model.fit(X_train, y_train)
 
 # TEST MODEL
 y_pred = model.predict(X_test)
+y_predTrain = model.predict(X_train) # for overfitting evaluation
 # returns 1D array of shape (n_samples)
-# values 0 | 1
+# values 0 | 1 | 2
 y_prob = model.predict_proba(X_test)
-# returns 2D array of shape (n_samples, 2)
-# chance of 0 and 1 for each datapoint
+# returns 2D array of shape (n_samples, n_classes)
+# chance of 0 | 1 | 2 for each datapoint
 
 # EVALUATE MODEL
 accuracy = accuracy_score(y_test, y_pred)*100
 f1Score = f1_score(y_test, y_pred, average="macro")
+trainF1Score = f1_score(y_train, y_predTrain, average="macro") # compare with f1Score to check overfitting
 rocAucScore = roc_auc_score(y_test, y_prob, multi_class="ovr", average="macro")
 # precision: accuracy of positive predictions for each class (up/down)
 # recall: correctly identified positives / total true positives
@@ -90,6 +92,7 @@ cmatrix = confusion_matrix(y_test, y_pred)
 cmatrixDf = pd.DataFrame(cmatrix, index=["Real -", "Real ~", "Real +"], columns=["Pred -", "Pred ~", "Pred +"])
 print(f"Accuracy: {accuracy:.3f}%")
 print(f"F1 score (macro-averaged): {f1Score:.5f}")
+print(f"F1 score (train set): {trainF1Score:.5f}")
 print(f"ROC-AUC score: {rocAucScore:.5f}")
 print(f"Confusion matrix:\n{cmatrixDf}")
 

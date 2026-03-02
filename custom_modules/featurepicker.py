@@ -14,7 +14,9 @@ def evaluateFeatures(yearNow, instr, gran,
                      "learning_rate": 0.06,
                      "subsample": 0.8,
                      "colsample_bytree": 0.8,
-                     "min_child_weight": 5
+                     "min_child_weight": 5,
+                     "reg_alpha": 0.1,
+                     "reg_lambda": 5
                  }, n=5, deadzone=0.001, midThreshold=0):
     # DEFINE FEATURES
     features = [
@@ -30,11 +32,12 @@ def evaluateFeatures(yearNow, instr, gran,
     # LOAD DATAFRAME
     df = dataparser.parseData(f"json_data/{instr}_{gran}_{yearNow - 16}-01-01_{yearNow}-01-01.json")
 
-    # INITIALISE CUMULATIVE SCORE
+    # INITIALISE CUMULATIVE SCORES
     allAvgShaps = pd.Series(0.0, index=features)
 
     # LOOP TEST THROUGH ALL FOLDS
     for fold in range(10):
+        print(f"Starting fold {fold + 1}...")
         # split dataframes
         dfTrain = dataparser.splitByDate(df, datetime(yearNow - 16 + fold, 1, 1), datetime(yearNow - 10 + fold, 1, 1))
         dfTest = dataparser.splitByDate(df, datetime(yearNow - 10 + fold, 1, 1), datetime(yearNow - 9 + fold, 1, 1))
@@ -56,7 +59,7 @@ def evaluateFeatures(yearNow, instr, gran,
         X_test = dfTest[features]
 
         # train model
-        model = xgb.XGBClassifier(**params, eval_metric="logloss", random_state=42)
+        model = xgb.XGBClassifier(**params, eval_metric="mlogloss", random_state=42)
         model.fit(X_train, y_train)
 
         # feature importance

@@ -5,17 +5,21 @@ Time period: 2010-01-01 to 2026-01-01\
 Pulled from OANDA REST-v20 API, stored in JSON format
 
 ## DATASETS
-**Feature selection and hyperparameter tuning:**\
-10 folds of 6-year rolling windows\
+**Feature selection (SHAP):**\
+10 folds of 7-year rolling windows\
 Train: 2010-2015, Test: 2016\
 Train: 2011-2016, Test: 2017\
 ...\
 Train: 2019-2024, Test: 2025\
+**Hyperparameter tuning (Optuna, ):**\
+5 folds of 7-year rolling windows (advance by 2 years per fold)\
+2011-2017, 2013-2019, ..., 2019-2025\
+Cross-validation performed by dividing into subfolds\
 **Final model training:**\
 Train: 2010-2024, Test: 2025
 
 ## INITIAL FEATURE ENGINEERING
-Scoring metric for selection: SHAP values\
+**Scoring metric:** SHAP values\
 **Price:**\
 Returns => Percentage change from previous close\
 High-low spread (normalised) => (H - L) / C\
@@ -39,15 +43,14 @@ Bollinger band position => (C - lowerband) / (upperband - lowerband)\
 1/2/3/4/5-period lagged volume => Volume values of previous 5 candles
 
 ## HYPERPARAMETER TUNING
-**Scoring metric:**\
-Macro-adjusted F1 score (see Explanation of metrics below)\
-**Variations tested:**\
-No. of trees:      [100, 200, 300]\
-Max tree depth:    [3, 4, 5, 6]\
-Learning rate:     [0.01, 0.05, 0.1] => shrinks contribution of each tree\
-Data subsample:    [0.7, 0.8, 1.0] => fraction of data sampled per tree\
-Feature subsample: [0.7, 0.8, 1.0] => fraction of features sampled per tree\
-Min child weight:  [1, 3, 5] => Higher values make model require more evidence to make a split
+**Scoring metric:** Macro-adjusted F1 score (see Explanation of metrics below)\
+**Hyperparameters tested:**\
+No. of trees\
+Max tree depth\
+Learning rate: shrinks contribution of each tree\
+Data subsample: fraction of data sampled per tree\
+Feature subsample: fraction of features sampled per tree\
+Min child weight: Higher values make model require more evidence to make a split
 
 
 ## MODEL EVALUATION
@@ -164,3 +167,26 @@ Recall (0-1) => Correctly predicted 1's / All real 1's
 | Real - | 241 | 23 | 301 |
 | Real ~ | 121 | 37 | 225 |
 | Real + | 239 | 35 | 328 |
+
+### Model 4
+*Changes from v3: Switched to Optuna for hyperparameter tuning instead of RandomizedSearchCV*\
+**Features:** ["atr_14", "vol_ratio_lag3", "normalised_ema50", "bb_width", "vol_ratio_lag4", "rsi_14", "vol_ratio_lag1", "macd_hist", "hl_spread", "vol_ratio", "return_lag4"]\
+**Hyperparameters:** {\
+"n_estimators": 570,\
+"max_depth": 5,\
+"learning_rate": 0.0515499473,\
+"subsample": 0.7123781799,\
+"colsample_bytree": 0.8614535802,\
+"min_child_weight": 37,\
+"reg_alpha": 0.8768283771,\
+"reg_lambda": 4.1420416058
+}\
+**Accuracy:** 38.323%\
+**F1 score (macro-averaged):** 0.33282\
+**ROC-AUC score:** 0.53686\
+**Confusion matrix:**\
+| &nbsp; | Pred - | Pred ~ | Pred + |
+| --- | --- | --- | --- |
+| Real - | 230 | 35 | 300 |
+| Real ~ | 143 | 37 | 203 |
+| Real + | 232 | 43 | 327 |
