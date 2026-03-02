@@ -1,6 +1,6 @@
 ## About project
 Goal: Predict the direction of future price movements in forex markets by training a machine-learning model\
-See docs.md for details on data collection, tuning, training, and testing methodology\
+See DOCS.md for details on data collection, tuning, training, and testing methodology\
 Fully-trained models located in models folder, tuned with results obtained by me
 
 ## Outline of methodology
@@ -15,7 +15,7 @@ The modules are then called by the top-level scripts to execute the code
 
 ## How to replicate
 Each of the top-level scripts (fetch_data, select_features, tune_params, train_model) contain 4 global variables (yearNow, instrument, granularity, candlesAhead)\
-(candlesAhead determines the number of candles ahead for which the model predicts the net movement)\
+*candlesAhead determines the number of candles ahead for which the model predicts the net movement*\
 Change these accordingly if you want to build your own model using this framework\
 Note the features you want to keep after Phase 2, and pass them in the features argument for Phase 3\
 In Phase 4, set the final features and hyperparameters in the features and params variables respectively\

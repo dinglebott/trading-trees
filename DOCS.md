@@ -139,7 +139,7 @@ Recall (0-1) => Correctly predicted 1's / All real 1's
 **F1 score (macro-averaged):** 0.49231\
 **ROC-AUC score:** 0.50226\
 **Confusion matrix:**\
-| --- | Pred - | Pred + |
+| | Pred - | Pred + |
 | --- | --- | --- |
 | Real - | 356 | 412 |
 | Real + | 376 | 410 |
@@ -159,7 +159,7 @@ Recall (0-1) => Correctly predicted 1's / All real 1's
 **F1 score (macro-averaged):** 0.33958\
 **ROC-AUC score:** 0.55234\
 **Confusion matrix:**\
-| --- | Pred - | Pred ~ | Pred + |
+| &nbsp; | Pred - | Pred ~ | Pred + |
 | --- | --- | --- | --- |
 | Real - | 241 | 23 | 301 |
 | Real ~ | 121 | 37 | 225 |
