@@ -77,7 +77,11 @@ Recall (0-1) => Correctly predicted 1's / All real 1's
 **Accuracy:** 51.834%\
 **F1 score (macro-averaged):** 0.51715\
 **ROC-AUC score:** 0.52330\
-**Confusion matrix:** TN(1765), FP(1322), FN(1672), TP(1457)
+**Confusion matrix:**\
+| --- | Pred - | Pred + |
+| --- | --- | --- |
+| Real - | 1765 | 1322 |
+| Real + | 1672 | 1457 |
 
 ### Model 2
 *Changes from v1: Target variable changed to net return of next 5 candles*\
@@ -93,7 +97,11 @@ Recall (0-1) => Correctly predicted 1's / All real 1's
 **Accuracy:** 52.220%\
 **F1 score (macro-averaged):** 0.52151\
 **ROC-AUC score:** 0.52614\
-**Confusion matrix:** TN(1505), FP(1515), FN(1455), TP(1741)
+**Confusion matrix:**\
+| --- | Pred - | Pred + |
+| --- | --- | --- |
+| Real - | 1505 | 1515 |
+| Real + | 1455 | 1741 |
 
 ### Model 2.1
 *Changes from v2: Added reg_alpha and reg_lambda hyperparameters*\
@@ -110,7 +118,11 @@ Recall (0-1) => Correctly predicted 1's / All real 1's
 **Accuracy:** 51.577%\
 **F1 score (macro-averaged):** 0.51493\
 **ROC-AUC score:** 0.52487\
-**Confusion matrix:** TN(1474), FP(1546), FN(1464), TP(1732)
+**Confusion matrix:**\
+| --- | Pred - | Pred + |
+| --- | --- | --- |
+| Real - | 1474 | 1546 |
+| Real + | 1464 | 1732 |
 
 ### Model 2.2
 *Changes from v2: Granularity H4 and prediction changed to next 7 candles*\
@@ -126,4 +138,29 @@ Recall (0-1) => Correctly predicted 1's / All real 1's
 **Accuracy:** 49.292%\
 **F1 score (macro-averaged):** 0.49231\
 **ROC-AUC score:** 0.50226\
-**Confusion matrix:** TN(356), FP(412), FN(376), TP(410)
+**Confusion matrix:**\
+| --- | Pred - | Pred + |
+| --- | --- | --- |
+| Real - | 356 | 412 |
+| Real + | 376 | 410 |
+
+### Model 3
+*Changes from v2: Granularity H4, prediction changed to next 4 candles, added a third class "flat"*\
+**Features:** ["atr_14", "vol_ratio_lag3", "normalised_ema50", "bb_width", "rsi_14", "macd_hist", "vol_ratio_lag4", "hl_spread", "vol_ratio_lag1", "vol_ratio", "bb_position"]\
+**Hyperparameters:** {\
+"n_estimators": 200,\
+"max_depth": 4,\
+"learning_rate": 0.085,\
+"subsample": 0.88,\
+"colsample_bytree": 0.89,\
+"min_child_weight": 3\
+}\
+**Accuracy:** 39.097%\
+**F1 score (macro-averaged):** 0.33958\
+**ROC-AUC score:** 0.55234\
+**Confusion matrix:**\
+| --- | Pred - | Pred ~ | Pred + |
+| --- | --- | --- | --- |
+| Real - | 241 | 23 | 301 |
+| Real ~ | 121 | 37 | 225 |
+| Real + | 239 | 35 | 328 |

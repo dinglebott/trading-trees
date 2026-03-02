@@ -3,6 +3,7 @@
 import xgboost as xgb
 from sklearn.model_selection import TimeSeriesSplit, RandomizedSearchCV
 import pandas as pd
+import numpy as np
 from . import dataparser
 from datetime import datetime
 
@@ -15,7 +16,7 @@ def tuneHyperparams(yearNow, instr, gran,
                             "vol_ratio", "bb_position",
                             "return_lag1", "return_lag2", "return_lag3", "return_lag4", "return_lag5",
                             "vol_ratio_lag1", "vol_ratio_lag2", "vol_ratio_lag3", "vol_ratio_lag4", "vol_ratio_lag5"
-                            ], n=5):
+                            ], n=5, threshold=0.001):
     # SUBFOLD SPLIT (respects time order)
     tscv = TimeSeriesSplit(n_splits=5)
 
@@ -40,8 +41,14 @@ def tuneHyperparams(yearNow, instr, gran,
         # split dataframes
         dfTrain = dataparser.splitByDate(df, datetime(yearNow - 16 + fold, 1, 1), datetime(yearNow - 9 + fold, 1, 1))
 
-        # target variable: next n candles net return => positive (1) or negative (0)
-        dfTrain["target"] = (dfTrain["close"].shift(-n) - dfTrain["close"] > 0).astype(int) # boolean to integer
+        # target variable: next n candles net return => negative (0), flat (1), positive (2)
+        dfTrain["forward_return"] = (dfTrain["close"].shift(-n) / dfTrain["close"]) - 1
+        conditions = [
+            dfTrain["forward_return"] < -threshold, # downward move
+            dfTrain["forward_return"] > threshold # upward move
+        ]
+        choices = [0, 2]
+        dfTrain["target"] = np.select(conditions, choices, default=1) # if not up or down, return flat (1)
         dfTrain.dropna(inplace=True)
         
         # define datasets
@@ -52,7 +59,7 @@ def tuneHyperparams(yearNow, instr, gran,
         search = RandomizedSearchCV(
             estimator=xgb.XGBClassifier(eval_metric="logloss", random_state=42),
             param_distributions=param_grid,
-            n_iter=40, # tries 40 random combinations from param_grid
+            n_iter=50, # tries 50 random combinations from param_grid
             scoring="f1_macro", # metric to evaluate by
             cv=tscv, # cross-validation method (the time-series split defined above)
             verbose=1, # print progress as folds complete

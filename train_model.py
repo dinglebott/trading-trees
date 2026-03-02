@@ -1,6 +1,7 @@
 import xgboost as xgb
 from sklearn.metrics import accuracy_score, f1_score, roc_auc_score, confusion_matrix
 import pandas as pd
+import numpy as np
 from custom_modules import dataparser
 from datetime import datetime
 import json
@@ -10,7 +11,8 @@ import os
 yearNow = 2026
 instrument = "EUR_USD"
 granularity = "H4"
-candlesAhead = 7
+candlesAhead = 4
+threshold = 0.001
 
 # LOAD AND SPLIT DATAFRAMES
 df = dataparser.parseData(f"json_data/{instrument}_{granularity}_{yearNow - 16}-01-01_{yearNow}-01-01.json")
@@ -42,7 +44,13 @@ print("Best hyperparameters:", bestParams)
 
 # TARGET VARIABLE: next n candles net return => positive (1) or negative (0)
 for dataset in (dfTrain, dfTest):
-    dataset["target"] = (dataset["close"].shift(-candlesAhead) - dataset["close"] > 0).astype(int) # boolean to integer
+    dataset["forward_return"] = (dataset["close"].shift(-candlesAhead) / dataset["close"]) - 1
+    conditions = [
+        dataset["forward_return"] < -threshold, # downward move
+        dataset["forward_return"] > threshold # upward move
+    ]
+    choices = [0, 2]
+    dataset["target"] = np.select(conditions, choices, default=1) # if not up or down, return flat (1)
     dataset.dropna(inplace=True)
 
 # DEFINE DATASETS
@@ -61,14 +69,14 @@ model.fit(X_train, y_train)
 y_pred = model.predict(X_test)
 # returns 1D array of shape (n_samples)
 # values 0 | 1
-y_prob = model.predict_proba(X_test)[:, 1]
+y_prob = model.predict_proba(X_test)
 # returns 2D array of shape (n_samples, 2)
 # chance of 0 and 1 for each datapoint
 
 # EVALUATE MODEL
 accuracy = accuracy_score(y_test, y_pred)*100
 f1Score = f1_score(y_test, y_pred, average="macro")
-rocAucScore = roc_auc_score(y_test, y_prob)
+rocAucScore = roc_auc_score(y_test, y_prob, multi_class="ovr", average="macro")
 # precision: accuracy of positive predictions for each class (up/down)
 # recall: correctly identified positives / total true positives
 # accuracy: correct predictions / total predictions
@@ -78,7 +86,7 @@ rocAucScore = roc_auc_score(y_test, y_prob)
 # CONFUSION MATRIX
 cmatrix = confusion_matrix(y_test, y_pred)
 # returns 2x2 numpy array breaking down true/false positives/negatives
-cmatrixDf = pd.DataFrame(cmatrix, index=["Real -", "Real +"], columns=["Predict -", "Predict +"])
+cmatrixDf = pd.DataFrame(cmatrix, index=["Real -", "Real ~", "Real +"], columns=["Pred -", "Pred ~", "Pred +"])
 print(f"Accuracy: {accuracy:.3f}%")
 print(f"F1 score (macro-averaged): {f1Score:.5f}")
 print(f"ROC-AUC score: {rocAucScore:.5f}")

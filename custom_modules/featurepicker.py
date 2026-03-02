@@ -10,12 +10,12 @@ import shap
 def evaluateFeatures(yearNow, instr, gran,
                  params={
                      "n_estimators": 200,
-                     "max_depth": 4,
-                     "learning_rate": 0.05,
+                     "max_depth": 6,
+                     "learning_rate": 0.06,
                      "subsample": 0.8,
                      "colsample_bytree": 0.8,
-                     "min_child_weight": 3
-                 }, n=5):
+                     "min_child_weight": 5
+                 }, n=5, threshold=0.001):
     # DEFINE FEATURES
     features = [
         "return", "hl_spread", "oc_spread", "body_ratio",
@@ -39,9 +39,15 @@ def evaluateFeatures(yearNow, instr, gran,
         dfTrain = dataparser.splitByDate(df, datetime(yearNow - 16 + fold, 1, 1), datetime(yearNow - 10 + fold, 1, 1))
         dfTest = dataparser.splitByDate(df, datetime(yearNow - 10 + fold, 1, 1), datetime(yearNow - 9 + fold, 1, 1))
 
-        # target variable: next n candles net return => positive (1) or negative (0)
+        # target variable: next n candles net return => negative (0), flat (1), positive (2)
         for dataset in (dfTrain, dfTest):
-            dataset["target"] = (dataset["close"].shift(-n) - dataset["close"] > 0).astype(int) # boolean to integer
+            dataset["forward_return"] = (dataset["close"].shift(-n) / dataset["close"]) - 1
+            conditions = [
+                dataset["forward_return"] < -threshold, # downward move
+                dataset["forward_return"] > threshold # upward move
+            ]
+            choices = [0, 2]
+            dataset["target"] = np.select(conditions, choices, default=1) # if not up or down, return flat (1)
             dataset.dropna(inplace=True)
         
         # define datasets
@@ -56,7 +62,8 @@ def evaluateFeatures(yearNow, instr, gran,
         # feature importance
         explainer = shap.TreeExplainer(model, X_train, feature_perturbation="interventional")
         shapValues = explainer(X_test, check_additivity=False) # shapValues is an Explanation object
-        foldAvgShaps = np.mean(np.abs(shapValues.values), axis=0) # foldAvgShaps is a numpy array
+        # shapValues.values returns a numpy array of shape (n_samples, n_features, n_classes)
+        foldAvgShaps = np.mean(np.abs(shapValues.values), axis=(0, 2)) # foldAvgShaps is a numpy array, values averaged over samples and classes
 
         # add to cumulative score
         allAvgShaps += pd.Series(foldAvgShaps, index=features)

@@ -6,7 +6,8 @@ import json
 yearNow = 2026
 instrument = "EUR_USD"
 granularity = "H4"
-candlesAhead = 7
+candlesAhead = 4
+threshold = 0.001
 
 # select features from Phase 2
 directory = "results"
@@ -20,7 +21,7 @@ bestFeatures = list(rawFeatures.keys())[:11]
 print("Best features:", bestFeatures)
 
 # pass to hyperparameter tuner
-allResults, finalParams = paramtuner.tuneHyperparams(yearNow, instrument, granularity, bestFeatures, n=candlesAhead)
+allResults, finalParams = paramtuner.tuneHyperparams(yearNow, instrument, granularity, bestFeatures, n=candlesAhead, threshold=threshold)
 print("\nAll results:")
 print(allResults)
 print("\nFinal hyperparameters:")
