@@ -45,13 +45,12 @@ Bollinger band position => (C - lowerband) / (upperband - lowerband)\
 ## HYPERPARAMETER TUNING
 **Scoring metric:** Macro-adjusted F1 score (see Explanation of metrics below)\
 **Hyperparameters tested:**\
-No. of trees\
-Max tree depth\
-Learning rate: shrinks contribution of each tree\
-Data subsample: fraction of data sampled per tree\
-Feature subsample: fraction of features sampled per tree\
-Min child weight: Higher values make model require more evidence to make a split
-
+n_estimators: No. of decision trees to build\
+max_depth: Maximum number of levels each tree can grow its depth to - lower values can reduce overfitting by limiting complexity\
+learning_rate: Lower value reduces the contribution of each tree and prevents overfitting\
+subsample: Fraction of data sampled per tree\
+colsample_bytree: Fraction of features sampled per tree\
+min_child_weight: Higher values make model require more evidence to make a split
 
 ## MODEL EVALUATION
 **Explanation of metrics:**\
@@ -63,8 +62,33 @@ ROC-AUC score (0-1) => Probability that a randomly chosen 1 is ranked higher tha
 Precision (0-1) => Correctly predicted 1's / All predicted 1's\
 Recall (0-1) => Correctly predicted 1's / All real 1's
 
+### Model 4.2
+*Changes from v4: Deadzone = 0.0015, tightened Optuna search space further to reduce overfitting*\
+**Features:** ["atr_14", "vol_ratio_lag3", "bb_width", "normalised_ema50", "hl_spread", "vol_ratio_lag4", "vol_ratio_lag1", "rsi_14", "macd_hist", "vol_ratio", "bb_position"]\
+**Hyperparameters:** {\
+"n_estimators": 440 *(100, 700)*,\
+"max_depth": 4 *(3, 4)*,\
+"learning_rate": 0.0712169867 *(0.005, 0.1)*,\
+"subsample": 0.5454792009 *(0.4, 0.65)*,\
+"colsample_bytree": 0.4645591451 *(0.4, 0.65)*,\
+"min_child_weight": 56 *(1, 100)*,\
+"reg_alpha": 5.4370866953 *(1, 10)*,\
+"reg_lambda": 16.8263394434 *(10, 30)*\
+}\
+*(Search spaces in italicised brackets)*\
+**Accuracy:** 39.871%\
+**F1 score (macro-averaged):** 0.39014\
+**F1 score (train set):** 0.51425\
+**ROC-AUC score:** 0.56332\
+**Confusion matrix:**
+| &nbsp; | Pred - | Pred ~ | Pred + |
+| --- | --- | --- | --- |
+| Real - | 151 | 181 | 140 |
+| Real ~ | 118 | 296 | 135 |
+| Real + | 181 | 177 | 171 |
+
 ### Model 4.1
-*Changes from v4: Widened deadzone, tightened Optuna search space to reduce overfitting*\
+*Changes from v4: Deadzone = 0.002, tightened Optuna search space to reduce overfitting*\
 **Features:** ["atr_14", "vol_ratio_lag3", "bb_width", "normalised_ema50", "hl_spread", "vol_ratio_lag4", "vol_ratio_lag1", "rsi_14", "macd_hist", "vol_ratio", "bb_position"]\
 **Hyperparameters:** {\
 "n_estimators": 600 *(100, 700)*,\

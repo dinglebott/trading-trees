@@ -9,6 +9,9 @@ import numpy as np
 from . import dataparser
 from datetime import datetime
 
+# suppress per-trial logs (set to INFO for normal logs, or DEBUG for more logs)
+optuna.logging.set_verbosity(optuna.logging.WARNING)
+
 def tuneHyperparams(yearNow, instr, gran,
                     features=[
                             "return", "hl_spread", "oc_spread", "body_ratio",
@@ -53,15 +56,15 @@ def tuneHyperparams(yearNow, instr, gran,
                 "num_class": 3, # no. of classes
                 "eval_metric": "mlogloss", # multiclass log loss
                 "n_estimators": trial.suggest_int("n_estimators", 100, 700, step=50),
-                "max_depth": trial.suggest_int("max_depth", 3, 5),
+                "max_depth": trial.suggest_int("max_depth", 3, 4),
                 "learning_rate": trial.suggest_float("learning_rate", 0.005, 0.1, log=True),
-                "subsample": trial.suggest_float("subsample", 0.4, 0.8),
-                "colsample_bytree": trial.suggest_float("colsample_bytree", 0.4, 0.8),
+                "subsample": trial.suggest_float("subsample", 0.4, 0.65),
+                "colsample_bytree": trial.suggest_float("colsample_bytree", 0.4, 0.65),
                 "min_child_weight": trial.suggest_int("min_child_weight", 1, 100),
-                "reg_alpha": trial.suggest_float("reg_alpha", 0.01, 5, log=True),
-                "reg_lambda": trial.suggest_float("reg_lambda", 5, 20, log=True),
+                "reg_alpha": trial.suggest_float("reg_alpha", 1, 10, log=True),
+                "reg_lambda": trial.suggest_float("reg_lambda", 10, 30, log=True),
                 "tree_method": "approx",  # use "exact" for slower more accurate training, "hist" for faster training, "approx" for medium
-                "random_state": 42,
+                "random_state": 42
             }
 
             # subfold split (respects time order)
@@ -96,9 +99,9 @@ def tuneHyperparams(yearNow, instr, gran,
     
     # PARSE ALL DATA AND CONCLUDE
     finalParams = pd.DataFrame(allResults).mean() # convert to Series by averaging best values of all parameters
-    finalParams.loc["n_estimators"] = int(round(finalParams.loc["n_estimators"])) # convert floats to integers
-    finalParams.loc["max_depth"] = int(round(finalParams.loc["max_depth"]))
-    finalParams.loc["min_child_weight"] = int(round(finalParams.loc["min_child_weight"]))
+    finalParams.loc["n_estimators"] = round(finalParams.loc["n_estimators"]) # round to nearest whole number (still a float)
+    finalParams.loc["max_depth"] = round(finalParams.loc["max_depth"])
+    finalParams.loc["min_child_weight"] = round(finalParams.loc["min_child_weight"])
     
     # RETURN RESULTS
     return finalParams
