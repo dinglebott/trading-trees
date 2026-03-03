@@ -2,7 +2,7 @@
 Instrument: EUR_USD with a granularity of 1hr\
 Candle data: OHLCV (open, high, low, close, volume)\
 Time period: 2010-01-01 to 2026-01-01\
-Pulled from OANDA REST-v20 API, stored in JSON format
+Pulled from OANDA REST-v20 API, stored in JSON format\
 <br/>
 
 ## DATASETS
@@ -17,7 +17,7 @@ Train: 2019-2024, Test: 2025\
 2011-2017, 2013-2019, ..., 2019-2025\
 Cross-validation performed by dividing into subfolds\
 **Final model training:**\
-Train: 2010-2024, Test: 2025
+Train: 2010-2024, Test: 2025\
 <br/>
 
 ## INITIAL FEATURE ENGINEERING
@@ -42,7 +42,7 @@ Volume ratio => volume / volumesma30\
 Bollinger band position => (C - lowerband) / (upperband - lowerband)\
 **Lagged features:**\
 1/2/3/4/5-period lagged returns => Return values of previous 5 candles\
-1/2/3/4/5-period lagged volume => Volume values of previous 5 candles
+1/2/3/4/5-period lagged volume => Volume values of previous 5 candles\
 <br/>
 
 ## HYPERPARAMETER TUNING
@@ -53,7 +53,7 @@ max_depth: Maximum number of levels each tree can grow its depth to - lower valu
 learning_rate: Lower value reduces the contribution of each tree and prevents overfitting\
 subsample: Fraction of data sampled per tree\
 colsample_bytree: Fraction of features sampled per tree\
-min_child_weight: Higher values make model require more evidence to make a split
+min_child_weight: Higher values make model require more evidence to make a split\
 <br/>
 
 ## MODEL EVALUATION
@@ -64,7 +64,7 @@ F1 score (0-1) => Harmonic mean of Precision and Recall\
 F1 score (macro-averaged) => Unweighted mean of F1 score calculated for each class (1 and 0)\
 ROC-AUC score (0-1) => Probability that a randomly chosen 1 is ranked higher than a randomly chosen 0 by the model\
 Precision (0-1) => Correctly predicted 1's / All predicted 1's\
-Recall (0-1) => Correctly predicted 1's / All real 1's
+Recall (0-1) => Correctly predicted 1's / All real 1's\
 <br/>
 
 ### Model 4.2
