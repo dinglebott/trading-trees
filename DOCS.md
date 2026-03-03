@@ -75,8 +75,8 @@ Precision (0-1) => Correctly predicted 1's / All predicted 1's\
 Recall (0-1) => Correctly predicted 1's / All real 1's\
 <br/>
 
-### Model 4.4
-*Changes from v4.2: Implemented early stopping, utilise CUDA for training, tightened Optuna search space further*\
+### Model 5
+*Changes from v4.3: Added new features*\
 **Features:** ["atr_14", "volatility_momentum", "vol_ratio_lag3", "vol_ratio_lag4", "volatility_regime", "hl_spread", "vol_ratio_lag1", "vol_ratio", "normalised_ema50", "trend_strength", "bb_width"]\
 **Hyperparameters:** {\
 "max_depth": 3 *(3, 4)*,\
