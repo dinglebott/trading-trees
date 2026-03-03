@@ -23,9 +23,9 @@ Train: 2010-2024, Test: 2025\
 ## INITIAL FEATURE ENGINEERING
 **Scoring metric:** SHAP values\
 **Price:**\
-Returns => Percentage change from previous close\
+Return => Percentage change from previous close *(Removed in v4.4+)*\
 High-low spread (normalised) => (H - L) / C\
-Open-close spread (normalised) => (C - O) / C\
+Open-close spread (normalised) => (C - O) / C *(Removed in v4.4+)*\
 Body ratio => OC spread / HL spread\
 **Trend:**\
 12-period EMA (normalised) => (C / EMA) - 1\
@@ -41,10 +41,16 @@ Volume ratio => volume / volumesma30\
 **Mean reversion:**\
 Bollinger band position => (C - lowerband) / (upperband - lowerband)\
 **Lagged features:**\
-1/2/3/4/5-period lagged returns => Return values of previous 5 candles\
-1/2/3/4/5-period lagged volume => Volume values of previous 5 candles\
+1/2/3/4/5-period lagged returns => Return values of previous 5 candles *(Removed lag5 in v4.4+)*\
+1/2/3/4/5-period lagged volume => Volume values of previous 5 candles *(Removed lag5 in v4.4+)*\
 **Hybrid features (added in v4.4+):**
-ATR-RSI interaction => atr_14 * rsi_14 for volatility-adjusted momentum\
+Volatility-adjusted momentum => atr_14 * rsi_14\
+Volume-trend confluence => vol_ratio * ema50\
+Trend strength => abs(ema15 - ema50)\
+Volatility regime => atr_14 / atr_14 50-period mean\
+Candle direction => Sign of close - open\
+Upper wick => (High - candle top) / atr_14\
+Lower wick => (Candle bottom - low) / atr_14\
 <br/>
 
 ## HYPERPARAMETER TUNING
@@ -69,17 +75,42 @@ Precision (0-1) => Correctly predicted 1's / All predicted 1's\
 Recall (0-1) => Correctly predicted 1's / All real 1's\
 <br/>
 
+### Model 4.4
+*Changes from v4.2: Implemented early stopping, utilise CUDA for training, tightened Optuna search space further*\
+**Features:** ["atr_14", "volatility_momentum", "vol_ratio_lag3", "vol_ratio_lag4", "volatility_regime", "hl_spread", "vol_ratio_lag1", "vol_ratio", "normalised_ema50", "trend_strength", "bb_width"]\
+**Hyperparameters:** {\
+"max_depth": 3 *(3, 4)*,\
+"learning_rate": 0.05885 *(0.005, 0.1)*,\
+"subsample": 0.52596 *(0.35, 0.65)*,\
+"colsample_bytree": 0.51763 *(0.35, 0.65)*,\
+"min_child_weight": 84 *(40, 100)*,\
+"reg_alpha": 4.38079 *(1, 15)*,\
+"reg_lambda": 22.18329 *(10, 30)*\
+}\
+*(Search spaces in italicised brackets)*\
+**Accuracy:** 41.419%\
+**F1 score (macro-averaged):** 0.40125\
+**F1 score (train set):** 0.43508\
+**ROC-AUC score:** 0.59432\
+**Confusion matrix:**
+| &nbsp; | Pred - | Pred ~ | Pred + |
+| --- | --- | --- | --- |
+| Real - | 145 | 194 | 133 |
+| Real ~ | 113 | 325 | 111 |
+| Real + | 161 | 196 | 172 |
+<br/>
+
 ### Model 4.3
 *Changes from v4.2: Implemented early stopping, utilise CUDA for training, tightened Optuna search space further*\
 **Features:** ["atr_14", "vol_ratio_lag3", "vol_ratio_lag4", "normalised_ema50", "vol_ratio", "hl_spread", "vol_ratio_lag1", "bb_width", "macd_hist", "rsi_14", "bb_position"]\
 **Hyperparameters:** {\
 "max_depth": 4 *(3, 4)*,\
-"learning_rate": 0.051957 *(0.005, 0.1)*,\
-"subsample": 0.499137 *(0.35, 0.65)*,\
-"colsample_bytree": 0.434791 *(0.35, 0.65)*,\
+"learning_rate": 0.05196 *(0.005, 0.1)*,\
+"subsample": 0.49914 *(0.35, 0.65)*,\
+"colsample_bytree": 0.43479 *(0.35, 0.65)*,\
 "min_child_weight": 60 *(40, 100)*,\
-"reg_alpha": 8.428104 *(1, 15)*,\
-"reg_lambda": 21.188671 *(10, 30)*\
+"reg_alpha": 8.42810 *(1, 15)*,\
+"reg_lambda": 21.18867 *(10, 30)*\
 }\
 *(Search spaces in italicised brackets)*\
 **Accuracy:** 40.323%\
@@ -100,12 +131,12 @@ Recall (0-1) => Correctly predicted 1's / All real 1's\
 **Hyperparameters:** {\
 "n_estimators": 440 *(100, 700)*,\
 "max_depth": 4 *(3, 4)*,\
-"learning_rate": 0.0712169867 *(0.005, 0.1)*,\
-"subsample": 0.5454792009 *(0.4, 0.65)*,\
-"colsample_bytree": 0.4645591451 *(0.4, 0.65)*,\
+"learning_rate": 0.07122 *(0.005, 0.1)*,\
+"subsample": 0.54548 *(0.4, 0.65)*,\
+"colsample_bytree": 0.46456 *(0.4, 0.65)*,\
 "min_child_weight": 56 *(1, 100)*,\
-"reg_alpha": 5.4370866953 *(1, 10)*,\
-"reg_lambda": 16.8263394434 *(10, 30)*\
+"reg_alpha": 5.43709 *(1, 10)*,\
+"reg_lambda": 16.82634 *(10, 30)*\
 }\
 *(Search spaces in italicised brackets)*\
 **Accuracy:** 39.871%\
@@ -126,12 +157,12 @@ Recall (0-1) => Correctly predicted 1's / All real 1's\
 **Hyperparameters:** {\
 "n_estimators": 600 *(100, 700)*,\
 "max_depth": 5 *(3, 5)*,\
-"learning_rate": 0.0810526073 *(0.005, 0.1)*,\
-"subsample": 0.5848394118 *(0.4, 0.8)*,\
-"colsample_bytree": 0.6241455026 *(0.4, 0.8)*,\
+"learning_rate": 0.08105 *(0.005, 0.1)*,\
+"subsample": 0.58484 *(0.4, 0.8)*,\
+"colsample_bytree": 0.62415 *(0.4, 0.8)*,\
 "min_child_weight": 33 *(1, 100)*,\
-"reg_alpha": 0.4983704418 *(0.01, 5)*,\
-"reg_lambda": 10.5454424495 *(5, 20)*\
+"reg_alpha": 0.49837 *(0.01, 5)*,\
+"reg_lambda": 10.54544 *(5, 20)*\
 }\
 *(Search spaces in italicised brackets)*\
 **Accuracy:** 44.581%\
@@ -152,12 +183,12 @@ Recall (0-1) => Correctly predicted 1's / All real 1's\
 **Hyperparameters:** {\
 "n_estimators": 570 *(100, 700)*,\
 "max_depth": 5 *(3, 6)*,\
-"learning_rate": 0.0515499473 *(0.005, 0.1)*,\
-"subsample": 0.7123781799 *(0.5, 1.0)*,\
-"colsample_bytree": 0.8614535802 *(0.5, 1.0)*,\
+"learning_rate": 0.05155 *(0.005, 0.1)*,\
+"subsample": 0.71238 *(0.5, 1.0)*,\
+"colsample_bytree": 0.86145 *(0.5, 1.0)*,\
 "min_child_weight": 37 *(1, 100)*,\
-"reg_alpha": 0.8768283771 *(0.01, 5)*,\
-"reg_lambda": 4.1420416058 *(1, 20)*\
+"reg_alpha": 0.87683 *(0.01, 5)*,\
+"reg_lambda": 4.14204 *(1, 20)*\
 }\
 *(Search spaces in italicised brackets)*\
 **Accuracy:** 38.323%\

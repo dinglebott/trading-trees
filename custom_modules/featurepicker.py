@@ -9,25 +9,27 @@ import shap
 
 def evaluateFeatures(yearNow, instr, gran,
                  params={
-                     "max_depth": 3,
-                     "learning_rate": 0.06,
+                     "max_depth": 4,
+                     "learning_rate": 0.05,
                      "subsample": 0.5,
                      "colsample_bytree": 0.5,
-                     "min_child_weight": 50,
-                     "reg_alpha": 3,
-                     "reg_lambda": 15,
+                     "min_child_weight": 55,
+                     "reg_alpha": 8,
+                     "reg_lambda": 20,
                      "device": "cuda", # use gpu
                      "tree_method": "hist"
                  }, n=5, deadzone=0.001, midThreshold=0):
     # DEFINE FEATURES
     features = [
-        "return", "hl_spread", "oc_spread", "body_ratio",
+        "hl_spread", "body_ratio",
         "normalised_ema15", "normalised_ema50",
         "rsi_14", "macd_hist",
         "atr_14", "bb_width",
         "vol_ratio", "bb_position",
-        "return_lag1", "return_lag2", "return_lag3", "return_lag4", "return_lag5",
-        "vol_ratio_lag1", "vol_ratio_lag2", "vol_ratio_lag3", "vol_ratio_lag4", "vol_ratio_lag5"
+        "return_lag1", "return_lag2", "return_lag3", "return_lag4",
+        "vol_ratio_lag1", "vol_ratio_lag2", "vol_ratio_lag3", "vol_ratio_lag4",
+        "upper_wick", "lower_wick", "direction", "volatility_momentum", "vol_trend",
+        "trend_strength", "volatility_regime"
     ]
     
     # LOAD DATAFRAME

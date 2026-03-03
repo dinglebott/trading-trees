@@ -67,7 +67,7 @@ model = xgb.XGBClassifier(**bestParams, eval_metric="mlogloss",
                           n_estimators=1000, # high ceiling
                           early_stopping_rounds=50, # stop after metric plateaus for 50 rounds
                           random_state=42,
-                          device="cuda", # use gpu
+                          device="cpu", # avoid transferring data to gpu
                           tree_method="hist")
 
 # TRAIN MODEL

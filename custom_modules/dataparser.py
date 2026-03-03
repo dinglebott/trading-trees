@@ -3,6 +3,7 @@
 # splitByDate() returns specified slice of DataFrame by date
 import json
 import pandas as pd
+import numpy as np
 
 def parseData(jsonPath):
     # deserialise json data
@@ -70,6 +71,15 @@ def parseData(jsonPath):
     for lag in range(1, 6):
         df[f"return_lag{lag}"] = df["return"].shift(lag)
         df[f"vol_ratio_lag{lag}"] = df["vol_ratio"].shift(lag)
+    
+    # new features (v4.4+)
+    df["upper_wick"] = (df["high"] - df[["open", "close"]].max(axis=1)) / df["atr_14"]
+    df["lower_wick"] = (df[["open", "close"]].min(axis=1) - df["low"]) / df["atr_14"]
+    df["direction"] = np.sign(df["close"] - df["open"])
+    df["volatility_momentum"] = df["rsi_14"] * df["atr_14"]
+    df["vol_trend"] = df["vol_ratio"] * df["normalised_ema50"]
+    df["trend_strength"] = abs(df["normalised_ema15"] - df["normalised_ema50"])
+    df["volatility_regime"] = df["atr_14"] / df["atr_14"].rolling(50).mean()
     
     # drop empty rows and return
     df.dropna(inplace=True)

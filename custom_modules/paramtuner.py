@@ -14,13 +14,15 @@ optuna.logging.set_verbosity(optuna.logging.WARNING)
 
 def tuneHyperparams(yearNow, instr, gran,
                     features=[
-                            "return", "hl_spread", "oc_spread", "body_ratio",
+                            "hl_spread", "body_ratio",
                             "normalised_ema15", "normalised_ema50",
                             "rsi_14", "macd_hist",
                             "atr_14", "bb_width",
                             "vol_ratio", "bb_position",
-                            "return_lag1", "return_lag2", "return_lag3", "return_lag4", "return_lag5",
-                            "vol_ratio_lag1", "vol_ratio_lag2", "vol_ratio_lag3", "vol_ratio_lag4", "vol_ratio_lag5"
+                            "return_lag1", "return_lag2", "return_lag3", "return_lag4",
+                            "vol_ratio_lag1", "vol_ratio_lag2", "vol_ratio_lag3", "vol_ratio_lag4",
+                            "upper_wick", "lower_wick", "direction", "volatility_momentum", "vol_trend",
+                            "trend_strength", "volatility_regime"
                             ], n=5, deadzone=0.001, midThreshold=0):
     # LOAD DATAFRAME
     df = dataparser.parseData(f"json_data/{instr}_{gran}_{yearNow - 16}-01-01_{yearNow}-01-01.json")
