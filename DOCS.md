@@ -43,6 +43,8 @@ Bollinger band position => (C - lowerband) / (upperband - lowerband)\
 **Lagged features:**\
 1/2/3/4/5-period lagged returns => Return values of previous 5 candles\
 1/2/3/4/5-period lagged volume => Volume values of previous 5 candles\
+**Hybrid features (added in v4.4+):**
+ATR-RSI interaction => atr_14 * rsi_14 for volatility-adjusted momentum\
 <br/>
 
 ## HYPERPARAMETER TUNING
@@ -68,7 +70,7 @@ Recall (0-1) => Correctly predicted 1's / All real 1's\
 <br/>
 
 ### Model 4.3
-*Changes from v4.2: Implemented CUDA training, tightened Optuna search space further*\
+*Changes from v4.2: Implemented early stopping, utilise CUDA for training, tightened Optuna search space further*\
 **Features:** ["atr_14", "vol_ratio_lag3", "vol_ratio_lag4", "normalised_ema50", "vol_ratio", "hl_spread", "vol_ratio_lag1", "bb_width", "macd_hist", "rsi_14", "bb_position"]\
 **Hyperparameters:** {\
 "max_depth": 4 *(3, 4)*,\
