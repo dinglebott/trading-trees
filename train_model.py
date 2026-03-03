@@ -17,7 +17,8 @@ midThreshold = 0 # defines midpoint from which to split "up" and "down" classes
 
 # LOAD AND SPLIT DATAFRAMES
 df = dataparser.parseData(f"json_data/{instrument}_{granularity}_{yearNow - 16}-01-01_{yearNow}-01-01.json")
-dfTrain = dataparser.splitByDate(df, datetime(yearNow - 16, 1, 1), datetime(yearNow - 1, 1, 1))
+dfTrain = dataparser.splitByDate(df, datetime(yearNow - 16, 1, 1), datetime(yearNow - 2, 1, 1))
+dfVal = dataparser.splitByDate(df, datetime(yearNow - 2, 1, 1), datetime(yearNow - 1, 1, 1))
 dfTest = dataparser.splitByDate(df, datetime(yearNow - 1, 1, 1), datetime(yearNow, 1, 1))
 
 # DEFINE FEATURES (use results from Phase 2)
@@ -38,13 +39,12 @@ filepath = os.path.join(directory, filename)
 with open(filepath, "r") as file:
     bestParams = json.load(file) # bestParams is a Python dict
 # cast floats to ints where necessary
-bestParams["n_estimators"] = int(bestParams["n_estimators"])
 bestParams["max_depth"] = int(bestParams["max_depth"])
 bestParams["min_child_weight"] = int(bestParams["min_child_weight"])
 print("Best hyperparameters:", bestParams)
 
 # TARGET VARIABLE: next n candles net return => positive (1) or negative (0)
-for dataset in (dfTrain, dfTest):
+for dataset in (dfTrain, dfVal, dfTest):
     dataset["forward_return"] = (dataset["close"].shift(-candlesAhead) / dataset["close"]) - 1
     conditions = [
         dataset["forward_return"] < midThreshold - deadzone, # downward move
@@ -57,14 +57,21 @@ for dataset in (dfTrain, dfTest):
 # DEFINE DATASETS
 X_train = dfTrain[bestFeatures]
 y_train = dfTrain["target"]
+X_val = dfVal[bestFeatures]
+y_val = dfVal["target"]
 X_test = dfTest[bestFeatures]
 y_test = dfTest["target"]
 
 # BUILD MODEL
-model = xgb.XGBClassifier(**bestParams, eval_metric="mlogloss", random_state=42)
+model = xgb.XGBClassifier(**bestParams, eval_metric="mlogloss",
+                          n_estimators=1000, # high ceiling
+                          early_stopping_rounds=50, # stop after metric plateaus for 50 rounds
+                          random_state=42,
+                          device="cuda", # use gpu
+                          tree_method="hist")
 
 # TRAIN MODEL
-model.fit(X_train, y_train)
+model.fit(X_train, y_train, eval_set=[(X_val, y_val)], verbose=False)
 
 # TEST MODEL
 y_pred = model.predict(X_test)

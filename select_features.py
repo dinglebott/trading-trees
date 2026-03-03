@@ -1,5 +1,4 @@
 from custom_modules import featurepicker
-import pandas as pd
 import os
 
 # PHASE 2: SELECT FEATURES

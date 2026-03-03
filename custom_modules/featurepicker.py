@@ -9,14 +9,15 @@ import shap
 
 def evaluateFeatures(yearNow, instr, gran,
                  params={
-                     "n_estimators": 200,
-                     "max_depth": 6,
+                     "max_depth": 3,
                      "learning_rate": 0.06,
-                     "subsample": 0.8,
-                     "colsample_bytree": 0.8,
-                     "min_child_weight": 5,
-                     "reg_alpha": 0.1,
-                     "reg_lambda": 5
+                     "subsample": 0.5,
+                     "colsample_bytree": 0.5,
+                     "min_child_weight": 50,
+                     "reg_alpha": 3,
+                     "reg_lambda": 15,
+                     "device": "cuda", # use gpu
+                     "tree_method": "hist"
                  }, n=5, deadzone=0.001, midThreshold=0):
     # DEFINE FEATURES
     features = [
@@ -39,11 +40,12 @@ def evaluateFeatures(yearNow, instr, gran,
     for fold in range(10):
         print(f"\nStarting fold {fold + 1}...")
         # split dataframes
-        dfTrain = dataparser.splitByDate(df, datetime(yearNow - 16 + fold, 1, 1), datetime(yearNow - 10 + fold, 1, 1))
+        dfTrain = dataparser.splitByDate(df, datetime(yearNow - 16 + fold, 1, 1), datetime(yearNow - 11 + fold, 1, 1))
+        dfVal = dataparser.splitByDate(df, datetime(yearNow - 11 + fold, 1, 1), datetime(yearNow - 10 + fold, 1, 1))
         dfTest = dataparser.splitByDate(df, datetime(yearNow - 10 + fold, 1, 1), datetime(yearNow - 9 + fold, 1, 1))
 
         # target variable: next n candles net return => negative (0), flat (1), positive (2)
-        for dataset in (dfTrain, dfTest):
+        for dataset in (dfTrain, dfVal, dfTest):
             dataset["forward_return"] = (dataset["close"].shift(-n) / dataset["close"]) - 1
             conditions = [
                 dataset["forward_return"] < midThreshold - deadzone, # downward move
@@ -56,11 +58,16 @@ def evaluateFeatures(yearNow, instr, gran,
         # define datasets
         X_train = dfTrain[features]
         y_train = dfTrain["target"]
+        X_val = dfVal[features]
+        y_val = dfVal["target"]
         X_test = dfTest[features]
 
         # train model
-        model = xgb.XGBClassifier(**params, eval_metric="mlogloss", random_state=42)
-        model.fit(X_train, y_train)
+        model = xgb.XGBClassifier(**params, eval_metric="mlogloss",
+                                  n_estimators=1000, # high ceiling
+                                  early_stopping_rounds=50, # stop after metric plateaus for 50 rounds
+                                  random_state=42)
+        model.fit(X_train, y_train, eval_set=[(X_val, y_val)], verbose=False)
 
         # feature importance
         explainer = shap.TreeExplainer(model, X_train, feature_perturbation="interventional")

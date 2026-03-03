@@ -54,17 +54,15 @@ def tuneHyperparams(yearNow, instr, gran,
                 "verbosity": 0,
                 "objective": "multi:softprob", # function to minimise (multiclass probability)
                 "num_class": 3, # no. of classes
-                "eval_metric": "mlogloss", # multiclass log loss
-                "n_estimators": trial.suggest_int("n_estimators", 100, 700, step=50),
                 "max_depth": trial.suggest_int("max_depth", 3, 4),
                 "learning_rate": trial.suggest_float("learning_rate", 0.005, 0.1, log=True),
-                "subsample": trial.suggest_float("subsample", 0.4, 0.65),
-                "colsample_bytree": trial.suggest_float("colsample_bytree", 0.4, 0.65),
-                "min_child_weight": trial.suggest_int("min_child_weight", 1, 100),
-                "reg_alpha": trial.suggest_float("reg_alpha", 1, 10, log=True),
+                "subsample": trial.suggest_float("subsample", 0.35, 0.65),
+                "colsample_bytree": trial.suggest_float("colsample_bytree", 0.35, 0.65),
+                "min_child_weight": trial.suggest_int("min_child_weight", 40, 100),
+                "reg_alpha": trial.suggest_float("reg_alpha", 1, 15, log=True),
                 "reg_lambda": trial.suggest_float("reg_lambda", 10, 30, log=True),
-                "tree_method": "approx",  # use "exact" for slower more accurate training, "hist" for faster training, "approx" for medium
-                "random_state": 42
+                "device": "cuda", # use gpu
+                "tree_method": "hist"
             }
 
             # subfold split (respects time order)
@@ -79,8 +77,11 @@ def tuneHyperparams(yearNow, instr, gran,
                 y_val = y_set.iloc[valIndexes]
 
                 # create and train model
-                model = xgb.XGBClassifier(**params)
-                model.fit(X_train, y_train, verbose=False)
+                model = xgb.XGBClassifier(**params, eval_metric="mlogloss", # multiclass log loss
+                                          n_estimators=1000, # high ceiling
+                                          early_stopping_rounds=50, # stop after metric plateaus for 50 rounds
+                                          random_state=42)
+                model.fit(X_train, y_train, eval_set=[(X_val, y_val)], verbose=False)
 
                 # evaluate and append score
                 y_pred = model.predict(X_val)
@@ -99,8 +100,7 @@ def tuneHyperparams(yearNow, instr, gran,
     
     # PARSE ALL DATA AND CONCLUDE
     finalParams = pd.DataFrame(allResults).mean() # convert to Series by averaging best values of all parameters
-    finalParams.loc["n_estimators"] = round(finalParams.loc["n_estimators"]) # round to nearest whole number (still a float)
-    finalParams.loc["max_depth"] = round(finalParams.loc["max_depth"])
+    finalParams.loc["max_depth"] = round(finalParams.loc["max_depth"]) # round to nearest whole number (still a float)
     finalParams.loc["min_child_weight"] = round(finalParams.loc["min_child_weight"])
     
     # RETURN RESULTS

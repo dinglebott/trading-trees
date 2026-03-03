@@ -67,8 +67,33 @@ Precision (0-1) => Correctly predicted 1's / All predicted 1's\
 Recall (0-1) => Correctly predicted 1's / All real 1's\
 <br/>
 
+### Model 4.3
+*Changes from v4.2: Implemented CUDA training, tightened Optuna search space further*\
+**Features:** ["atr_14", "vol_ratio_lag3", "vol_ratio_lag4", "normalised_ema50", "vol_ratio", "hl_spread", "vol_ratio_lag1", "bb_width", "macd_hist", "rsi_14", "bb_position"]\
+**Hyperparameters:** {\
+"max_depth": 4 *(3, 4)*,\
+"learning_rate": 0.051957 *(0.005, 0.1)*,\
+"subsample": 0.499137 *(0.35, 0.65)*,\
+"colsample_bytree": 0.434791 *(0.35, 0.65)*,\
+"min_child_weight": 60 *(40, 100)*,\
+"reg_alpha": 8.428104 *(1, 15)*,\
+"reg_lambda": 21.188671 *(10, 30)*\
+}\
+*(Search spaces in italicised brackets)*\
+**Accuracy:** 40.323%\
+**F1 score (macro-averaged):** 0.38989\
+**F1 score (train set):** 0.43716\
+**ROC-AUC score:** 0.57782\
+**Confusion matrix:**
+| &nbsp; | Pred - | Pred ~ | Pred + |
+| --- | --- | --- | --- |
+| Real - | 128 | 188 | 156 |
+| Real ~ | 104 | 313 | 132 |
+| Real + | 138 | 207 | 184 |
+<br/>
+
 ### Model 4.2
-*Changes from v4: Deadzone = 0.0015, tightened Optuna search space further to reduce overfitting*\
+*Changes from v4.1: Deadzone = 0.0015, tightened Optuna search space further to reduce overfitting*\
 **Features:** ["atr_14", "vol_ratio_lag3", "bb_width", "normalised_ema50", "hl_spread", "vol_ratio_lag4", "vol_ratio_lag1", "rsi_14", "macd_hist", "vol_ratio", "bb_position"]\
 **Hyperparameters:** {\
 "n_estimators": 440 *(100, 700)*,\
