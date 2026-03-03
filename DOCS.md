@@ -3,6 +3,7 @@ Instrument: EUR_USD with a granularity of 1hr\
 Candle data: OHLCV (open, high, low, close, volume)\
 Time period: 2010-01-01 to 2026-01-01\
 Pulled from OANDA REST-v20 API, stored in JSON format
+<br/>
 
 ## DATASETS
 **Feature selection (SHAP):**\
@@ -17,6 +18,7 @@ Train: 2019-2024, Test: 2025\
 Cross-validation performed by dividing into subfolds\
 **Final model training:**\
 Train: 2010-2024, Test: 2025
+<br/>
 
 ## INITIAL FEATURE ENGINEERING
 **Scoring metric:** SHAP values\
@@ -41,6 +43,7 @@ Bollinger band position => (C - lowerband) / (upperband - lowerband)\
 **Lagged features:**\
 1/2/3/4/5-period lagged returns => Return values of previous 5 candles\
 1/2/3/4/5-period lagged volume => Volume values of previous 5 candles
+<br/>
 
 ## HYPERPARAMETER TUNING
 **Scoring metric:** Macro-adjusted F1 score (see Explanation of metrics below)\
@@ -51,6 +54,7 @@ learning_rate: Lower value reduces the contribution of each tree and prevents ov
 subsample: Fraction of data sampled per tree\
 colsample_bytree: Fraction of features sampled per tree\
 min_child_weight: Higher values make model require more evidence to make a split
+<br/>
 
 ## MODEL EVALUATION
 **Explanation of metrics:**\
@@ -61,6 +65,7 @@ F1 score (macro-averaged) => Unweighted mean of F1 score calculated for each cla
 ROC-AUC score (0-1) => Probability that a randomly chosen 1 is ranked higher than a randomly chosen 0 by the model\
 Precision (0-1) => Correctly predicted 1's / All predicted 1's\
 Recall (0-1) => Correctly predicted 1's / All real 1's
+<br/>
 
 ### Model 4.2
 *Changes from v4: Deadzone = 0.0015, tightened Optuna search space further to reduce overfitting*\
@@ -86,8 +91,7 @@ Recall (0-1) => Correctly predicted 1's / All real 1's
 | Real - | 151 | 181 | 140 |
 | Real ~ | 118 | 296 | 135 |
 | Real + | 181 | 177 | 171 |
-<br />
-<br />
+<br/>
 
 ### Model 4.1
 *Changes from v4: Deadzone = 0.002, tightened Optuna search space to reduce overfitting*\
@@ -113,6 +117,7 @@ Recall (0-1) => Correctly predicted 1's / All real 1's
 | Real - | 66 | 259 | 51 |
 | Real ~ | 92 | 543 | 87 |
 | Real + | 92 | 278 | 82 |
+<br/>
 
 ### Model 4
 *Changes from v3: Switched to Optuna for hyperparameter tuning instead of RandomizedSearchCV*\
@@ -138,6 +143,7 @@ Recall (0-1) => Correctly predicted 1's / All real 1's
 | Real - | 230 | 35 | 300 |
 | Real ~ | 143 | 37 | 203 |
 | Real + | 232 | 43 | 327 |
+<br/>
 
 ### Model 3
 *Changes from v2: Granularity H4, prediction changed to next 4 candles, added a third class "flat"*\
@@ -159,6 +165,7 @@ Recall (0-1) => Correctly predicted 1's / All real 1's
 | Real - | 241 | 23 | 301 |
 | Real ~ | 121 | 37 | 225 |
 | Real + | 239 | 35 | 328 |
+<br/>
 
 ### Model 2.2
 *Changes from v2: Granularity H4 and prediction changed to next 7 candles*\
@@ -179,6 +186,7 @@ Recall (0-1) => Correctly predicted 1's / All real 1's
 | --- | --- | --- |
 | Real - | 356 | 412 |
 | Real + | 376 | 410 |
+<br/>
 
 ### Model 2.1
 *Changes from v2: Added reg_alpha and reg_lambda hyperparameters*\
@@ -200,6 +208,7 @@ Recall (0-1) => Correctly predicted 1's / All real 1's
 | --- | --- | --- |
 | Real - | 1474 | 1546 |
 | Real + | 1464 | 1732 |
+<br/>
 
 ### Model 2
 *Changes from v1: Target variable changed to net return of next 5 candles, feature selection metric changed to SHAP values*\
@@ -220,6 +229,7 @@ Recall (0-1) => Correctly predicted 1's / All real 1's
 | --- | --- | --- |
 | Real - | 1505 | 1515 |
 | Real + | 1455 | 1741 |
+<br/>
 
 ### Model 1
 **Target variable:** Return of next candle\
@@ -228,13 +238,13 @@ Recall (0-1) => Correctly predicted 1's / All real 1's
 **Features:** ["return", "oc_spread", "body_ratio", "normalised_ema15", "normalised_ema50", "rsi_14", "vol_ratio", "bb_position", "vol_ratio_lag1", "vol_ratio_lag3", "vol_ratio_lag4"]\
 *(features selected by default Gini importance metric, subsequent models use SHAP)*\
 **Hyperparameters:** {\
-                    "n_estimators": 300,\
-                    "max_depth": 5,\
-                    "learning_rate": 0.022,\
-                    "subsample": 0.76,\
-                    "colsample_bytree": 0.85,\
-                    "min_child_weight": 5\
-                }\
+"n_estimators": 300,\
+"max_depth": 5,\
+"learning_rate": 0.022,\
+"subsample": 0.76,\
+"colsample_bytree": 0.85,\
+"min_child_weight": 5\
+}\
 **Accuracy:** 51.834%\
 **F1 score (macro-averaged):** 0.51715\
 **ROC-AUC score:** 0.52330\
