@@ -80,6 +80,31 @@ Precision (0-1) => Correctly predicted 1's / All predicted 1's\
 Recall (0-1) => Correctly predicted 1's / All real 1's\
 <br/>
 
+### Model 6
+*Changes from v5.4: Revert prediction window back to 4 candles, deadzone = 0.0015, included 15 features*\
+**Features:** ["atr_14", "volatility_momentum", "vol_ratio_lag3", "volatility_regime", "vol_ratio_lag4", "hl_spread", "normalised_ema50", "vol_ratio_lag1", "trend_strength", "bb_width", "vol_ratio", "vol_momentum", "dist_ema15", "macd_hist", "vol_trend"]\
+**Hyperparameters:** {\
+"max_depth": 3 *(3, 4)*,\
+"learning_rate": 0.07372 *(0.005, 0.1)*,\
+"subsample": 0.42831 *(0.35, 0.65)*,\
+"colsample_bytree": 0.55986 *(0.35, 0.65)*,\
+"min_child_weight": 82 *(60, 120)*,\
+"reg_alpha": 4.93765 *(1, 15)*,\
+"reg_lambda": 17.80688 *(10, 30)*\
+}\
+*(Search spaces in italicised brackets)*\
+**Accuracy:** 42.258%\
+**F1 score (macro-averaged):** 0.41243\
+**F1 score (train set):** 0.42796\
+**ROC-AUC score:** 0.59313\
+**Confusion matrix:**
+| &nbsp; | Pred - | Pred ~ | Pred + |
+| --- | --- | --- | --- |
+| Real - | 153 | 179 | 140 |
+| Real ~ | 118 | 316 | 115 |
+| Real + | 156 | 187 | 186 |
+<br/>
+
 ### Model 5.4
 *Changes from v5.3: Increase prediction window to 7 candles, deadzone = 0.002, include 11 features instead of 8*\
 **Features:** ["atr_14", "volatility_momentum", "volatility_regime", "hl_spread", "bb_width", "normalised_ema50", "trend_strength", "macd_hist", "vol_trend", "rsi_14", "dist_ema15"]\
