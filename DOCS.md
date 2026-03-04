@@ -80,8 +80,58 @@ Precision (0-1) => Correctly predicted 1's / All predicted 1's\
 Recall (0-1) => Correctly predicted 1's / All real 1's\
 <br/>
 
+### Model 5.4
+*Changes from v5.3: Increase prediction window to 7 candles, deadzone = 0.0025, include 11 features instead of 8*\
+**Features:** ["atr_14", "volatility_momentum", "hl_spread", "normalised_ema50", "volatility_regime", "bb_width", "trend_strength", "vol_trend", "macd_hist", "rsi_14", "dist_ema15"]\
+**Hyperparameters:** {\
+"max_depth": 3 *(3, 4)*,\
+"learning_rate": 0.07950 *(0.005, 0.1)*,\
+"subsample": 0.44655 *(0.35, 0.65)*,\
+"colsample_bytree": 0.46264 *(0.35, 0.65)*,\
+"min_child_weight": 98 *(60, 120)*,\
+"reg_alpha": 5.68357 *(1, 15)*,\
+"reg_lambda": 16.09644 *(10, 30)*\
+}\
+*(Search spaces in italicised brackets)*\
+**Accuracy:** 37.750%\
+**F1 score (macro-averaged):** 0.32296\
+**F1 score (train set):** 0.38622\
+**ROC-AUC score:** 0.55597\
+**Confusion matrix:**
+| &nbsp; | Pred - | Pred ~ | Pred + |
+| --- | --- | --- | --- |
+| Real - | 247 | 19 | 271 |
+| Real ~ | 118 | 29 | 224 |
+| Real + | 256 | 25 | 308 |
+<br/>
+
+### Model 5.3
+*Changes from v5.2: Include 8 features instead of 18*\
+**Features:** ["atr_14", "volatility_momentum", "vol_ratio_lag3", "volatility_regime", "vol_ratio_lag4", "hl_spread", "normalised_ema50", "vol_ratio_lag1"]\
+**Hyperparameters:** {\
+"max_depth": 4 *(3, 4)*,\
+"learning_rate": 0.07283 *(0.005, 0.1)*,\
+"subsample": 0.52932 *(0.35, 0.65)*,\
+"colsample_bytree": 0.50222 *(0.35, 0.65)*,\
+"min_child_weight": 77 *(60, 120)*,\
+"reg_alpha": 7.12194 *(1, 15)*,\
+"reg_lambda": 16.54216 *(10, 30)*\
+}\
+*(Search spaces in italicised brackets)*\
+**Accuracy:** 42.129%\
+**F1 score (macro-averaged):** 0.41111\
+**F1 score (train set):** 0.43863\
+**ROC-AUC score:** 0.59198\
+**Confusion matrix:**
+| &nbsp; | Pred - | Pred ~ | Pred + |
+| --- | --- | --- | --- |
+| Real - | 159 | 189 | 124 |
+| Real ~ | 118 | 317 | 114 |
+| Real + | 163 | 189 | 177 |
+<br/>
+
 ### Model 5.2
-*Changes from v5: Include 18 features instead of 15, implement purge margin between train and test sets to prevent leakage*\
+*Changes from v5.1: Include 18 features instead of 15, implement purge margin between train and test sets to prevent leakage*\
 **Features:** ["atr_14", "volatility_momentum", "vol_ratio_lag3", "volatility_regime", "vol_ratio_lag4", "hl_spread", "vol_ratio_lag1", "trend_strength", "normalised_ema50", "vol_momentum", "bb_width", "vol_ratio", "macd_hist", "upper_wick", "vol_trend", "normalised_ema15", "return_lag3", "dist_ema15"]\
 **Hyperparameters:** {\
 "max_depth": 3 *(3, 4)*,\
@@ -131,7 +181,7 @@ Recall (0-1) => Correctly predicted 1's / All real 1's\
 <br/>
 
 ### Model 5
-*Changes from v4.3: Added new features*\
+*Changes from v4.3: Added new features, removed some features*\
 **Features:** ["atr_14", "volatility_momentum", "vol_ratio_lag3", "vol_ratio_lag4", "volatility_regime", "hl_spread", "vol_ratio_lag1", "vol_ratio", "normalised_ema50", "trend_strength", "bb_width"]\
 **Hyperparameters:** {\
 "max_depth": 3 *(3, 4)*,\

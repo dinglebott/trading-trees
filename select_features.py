@@ -5,8 +5,8 @@ import os
 yearNow = 2026
 instrument = "EUR_USD"
 granularity = "H4"
-candlesAhead = 4 # model predicts net return of the next n candles
-deadzone = 0.0015 # defines half the width of the "flat" class (distance from midThreshold in either direction)
+candlesAhead = 7 # model predicts net return of the next n candles
+deadzone = 0.0025 # defines half the width of the "flat" class (distance from midThreshold in either direction)
 midThreshold = 0 # defines midpoint from which to split "up" and "down" classes
 
 # uses all features and default hyperparameters
