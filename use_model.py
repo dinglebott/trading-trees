@@ -7,7 +7,7 @@ import json
 yearNow = 2026
 instrument = "EUR_USD"
 granularity = "H4"
-version = 4
+version = 6
 
 # DEFINE FEATURES (copy-paste from the model training features exactly)
 directory = "results"
@@ -16,8 +16,8 @@ filepath = os.path.join(directory, filename)
 # deserialise json data
 with open(filepath, "r") as file:
     rawFeatures = json.load(file) # rawFeatures is a Python dict
-# extract top 11 features into list
-features = list(rawFeatures.keys())[:11]
+# extract top 15 features into list
+features = list(rawFeatures.keys())[:15]
 
 # LOAD MODEL
 model = xgb.XGBClassifier()
