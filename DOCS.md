@@ -81,28 +81,28 @@ Recall (0-1) => Correctly predicted 1's / All real 1's\
 <br/>
 
 ### Model 5.4
-*Changes from v5.3: Increase prediction window to 7 candles, deadzone = 0.0025, include 11 features instead of 8*\
-**Features:** ["atr_14", "volatility_momentum", "hl_spread", "normalised_ema50", "volatility_regime", "bb_width", "trend_strength", "vol_trend", "macd_hist", "rsi_14", "dist_ema15"]\
+*Changes from v5.3: Increase prediction window to 7 candles, deadzone = 0.002, include 11 features instead of 8*\
+**Features:** ["atr_14", "volatility_momentum", "volatility_regime", "hl_spread", "bb_width", "normalised_ema50", "trend_strength", "macd_hist", "vol_trend", "rsi_14", "dist_ema15"]\
 **Hyperparameters:** {\
-"max_depth": 3 *(3, 4)*,\
-"learning_rate": 0.07950 *(0.005, 0.1)*,\
-"subsample": 0.44655 *(0.35, 0.65)*,\
-"colsample_bytree": 0.46264 *(0.35, 0.65)*,\
-"min_child_weight": 98 *(60, 120)*,\
-"reg_alpha": 5.68357 *(1, 15)*,\
-"reg_lambda": 16.09644 *(10, 30)*\
+"max_depth": 4 *(3, 4)*,\
+"learning_rate": 0.06299 *(0.005, 0.1)*,\
+"subsample": 0.49863 *(0.35, 0.65)*,\
+"colsample_bytree": 0.51383 *(0.35, 0.65)*,\
+"min_child_weight": 95 *(60, 120)*,\
+"reg_alpha": 5.55731 *(1, 15)*,\
+"reg_lambda": 16.64914 *(10, 30)*\
 }\
 *(Search spaces in italicised brackets)*\
-**Accuracy:** 37.750%\
-**F1 score (macro-averaged):** 0.32296\
-**F1 score (train set):** 0.38622\
-**ROC-AUC score:** 0.55597\
+**Accuracy:** 38.979%\
+**F1 score (macro-averaged):** 0.38777\
+**F1 score (train set):** 0.44275\
+**ROC-AUC score:** 0.57898\
 **Confusion matrix:**
 | &nbsp; | Pred - | Pred ~ | Pred + |
 | --- | --- | --- | --- |
-| Real - | 247 | 19 | 271 |
-| Real ~ | 118 | 29 | 224 |
-| Real + | 256 | 25 | 308 |
+| Real - | 175 | 165 | 140 |
+| Real ~ | 153 | 248 | 130 |
+| Real + | 201 | 155 | 180 |
 <br/>
 
 ### Model 5.3

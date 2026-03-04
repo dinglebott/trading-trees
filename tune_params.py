@@ -7,7 +7,7 @@ yearNow = 2026
 instrument = "EUR_USD"
 granularity = "H4"
 candlesAhead = 7 # model predicts net return of the next n candles
-deadzone = 0.0025 # defines half the width of the "flat" class (distance from midThreshold in either direction)
+deadzone = 0.002 # defines half the width of the "flat" class (distance from midThreshold in either direction)
 midThreshold = 0 # defines midpoint from which to split "up" and "down" classes
 
 # select features from Phase 2
