@@ -17,8 +17,8 @@ filepath = os.path.join(directory, filename)
 # deserialise json data
 with open(filepath, "r") as file:
     rawFeatures = json.load(file) # rawFeatures is a Python dict
-# extract top 11 features into list
-bestFeatures = list(rawFeatures.keys())[:11]
+# extract top 15 features into list
+bestFeatures = list(rawFeatures.keys())[:15]
 print("Best features:", bestFeatures)
 
 # pass to hyperparameter tuner

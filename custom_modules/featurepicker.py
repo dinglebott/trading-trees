@@ -28,8 +28,9 @@ def evaluateFeatures(yearNow, instr, gran,
         "vol_ratio", "bb_position",
         "return_lag1", "return_lag2", "return_lag3", "return_lag4",
         "vol_ratio_lag1", "vol_ratio_lag2", "vol_ratio_lag3", "vol_ratio_lag4",
-        "upper_wick", "lower_wick", "direction", "volatility_momentum", "vol_trend",
-        "trend_strength", "volatility_regime"
+        "upper_wick", "lower_wick", "direction", "volatility_momentum", "vol_trend", # v5+
+        "trend_strength", "volatility_regime", # v5+
+        "atr_adjusted_return", "return_accel", "vol_momentum", "dist_ema15" # v5.1+
     ]
     
     # LOAD DATAFRAME

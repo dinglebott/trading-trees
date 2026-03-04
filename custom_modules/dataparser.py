@@ -36,8 +36,8 @@ def parseData(jsonPath):
     df["body_ratio"] = (df["oc_spread"] / df["hl_spread"]).clip(-1, 1) # prevent infinity values
     # EMAs
     for period in (15, 50):
-        rawEma = getEma(period)
-        df[f"normalised_ema{period}"] = (df["close"] / rawEma) - 1
+        df[f"raw_ema{period}"] = getEma(period)
+        df[f"normalised_ema{period}"] = (df["close"] / df[f"raw_ema{period}"]) - 1
     # RSI
     def rsi(series, n=14):
         delta = series.diff()
@@ -72,7 +72,7 @@ def parseData(jsonPath):
         df[f"return_lag{lag}"] = df["return"].shift(lag)
         df[f"vol_ratio_lag{lag}"] = df["vol_ratio"].shift(lag)
     
-    # new features (v4.4+)
+    # new features (v5+)
     df["upper_wick"] = (df["high"] - df[["open", "close"]].max(axis=1)) / df["atr_14"]
     df["lower_wick"] = (df[["open", "close"]].min(axis=1) - df["low"]) / df["atr_14"]
     df["direction"] = np.sign(df["close"] - df["open"])
@@ -80,6 +80,12 @@ def parseData(jsonPath):
     df["vol_trend"] = df["vol_ratio"] * df["normalised_ema50"]
     df["trend_strength"] = abs(df["normalised_ema15"] - df["normalised_ema50"])
     df["volatility_regime"] = df["atr_14"] / df["atr_14"].rolling(50).mean()
+
+    # new features (v5.1+)
+    df["atr_adjusted_return"] = df["return"] / df["atr_14"]
+    df["return_accel"] = df["return_lag1"] - df["return_lag2"]
+    df["vol_momentum"] = df["vol_ratio"] - df["vol_ratio"].rolling(5).mean()
+    df["dist_ema15"] = (df["close"] - df["raw_ema15"]) / df["atr_14"]
     
     # drop empty rows and return
     df.dropna(inplace=True)

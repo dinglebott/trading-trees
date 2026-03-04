@@ -23,9 +23,9 @@ Train: 2010-2024, Test: 2025\
 ## INITIAL FEATURE ENGINEERING
 **Scoring metric:** SHAP values\
 **Price:**\
-Return => Percentage change from previous close *(Removed in v4.4+)*\
+Return => Percentage change from previous close *(Removed in v5+)*\
 High-low spread (normalised) => (H - L) / C\
-Open-close spread (normalised) => (C - O) / C *(Removed in v4.4+)*\
+Open-close spread (normalised) => (C - O) / C *(Removed in v5+)*\
 Body ratio => OC spread / HL spread\
 **Trend:**\
 12-period EMA (normalised) => (C / EMA) - 1\
@@ -41,9 +41,9 @@ Volume ratio => volume / volumesma30\
 **Mean reversion:**\
 Bollinger band position => (C - lowerband) / (upperband - lowerband)\
 **Lagged features:**\
-1/2/3/4/5-period lagged returns => Return values of previous 5 candles *(Removed lag5 in v4.4+)*\
-1/2/3/4/5-period lagged volume => Volume values of previous 5 candles *(Removed lag5 in v4.4+)*\
-**Hybrid features (added in v4.4+):**
+1/2/3/4/5-period lagged returns => Return values of previous 5 candles *(Removed lag5 in v5+)*\
+1/2/3/4/5-period lagged volume => Volume values of previous 5 candles *(Removed lag5 in v5+)*\
+**Hybrid features (added in v5+):**\
 Volatility-adjusted momentum => atr_14 * rsi_14\
 Volume-trend confluence => vol_ratio * ema50\
 Trend strength => abs(ema15 - ema50)\
@@ -51,6 +51,11 @@ Volatility regime => atr_14 / atr_14 50-period mean\
 Candle direction => Sign of close - open\
 Upper wick => (High - candle top) / atr_14\
 Lower wick => (Candle bottom - low) / atr_14\
+**More features (added in v5.1+):**\
+Volatility-adjusted return => return / atr_14\
+Return acceleration => return_lag1 - return_lag2\
+Volume momentum => vol_ratio - vol_ratio 5-period mean\
+Distance from EMA (volatility-adjusted) => (C - ema15) / atr_14\
 <br/>
 
 ## HYPERPARAMETER TUNING
@@ -73,6 +78,31 @@ F1 score (macro-averaged) => Unweighted mean of F1 score calculated for each cla
 ROC-AUC score (0-1) => Probability that a randomly chosen 1 is ranked higher than a randomly chosen 0 by the model\
 Precision (0-1) => Correctly predicted 1's / All predicted 1's\
 Recall (0-1) => Correctly predicted 1's / All real 1's\
+<br/>
+
+### Model X
+*Changes from v5: Added more features, include 15 instead of 11 features, calibrated min_child_weight*\
+**Features:** ["atr_14", "volatility_momentum", "vol_ratio_lag3", "vol_ratio_lag4", "volatility_regime", "hl_spread", "vol_ratio_lag1", "normalised_ema50", "trend_strength", "vol_momentum", "bb_width", "vol_ratio", "macd_hist", "upper_wick", "vol_trend"]\
+**Hyperparameters:** {\
+"max_depth": 3 *(3, 4)*,\
+"learning_rate": 0.05885 *(0.005, 0.1)*,\
+"subsample": 0.52596 *(0.35, 0.65)*,\
+"colsample_bytree": 0.51763 *(0.35, 0.65)*,\
+"min_child_weight": 84 *(60, 120)*,\
+"reg_alpha": 4.38079 *(1, 15)*,\
+"reg_lambda": 22.18329 *(10, 30)*\
+}\
+*(Search spaces in italicised brackets)*\
+**Accuracy:** 41.419%\
+**F1 score (macro-averaged):** 0.40125\
+**F1 score (train set):** 0.43508\
+**ROC-AUC score:** 0.59432\
+**Confusion matrix:**
+| &nbsp; | Pred - | Pred ~ | Pred + |
+| --- | --- | --- | --- |
+| Real - | 145 | 194 | 133 |
+| Real ~ | 113 | 325 | 111 |
+| Real + | 161 | 196 | 172 |
 <br/>
 
 ### Model 5

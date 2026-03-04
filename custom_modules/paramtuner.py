@@ -60,7 +60,7 @@ def tuneHyperparams(yearNow, instr, gran,
                 "learning_rate": trial.suggest_float("learning_rate", 0.005, 0.1, log=True),
                 "subsample": trial.suggest_float("subsample", 0.35, 0.65),
                 "colsample_bytree": trial.suggest_float("colsample_bytree", 0.35, 0.65),
-                "min_child_weight": trial.suggest_int("min_child_weight", 40, 100),
+                "min_child_weight": trial.suggest_int("min_child_weight", 60, 120),
                 "reg_alpha": trial.suggest_float("reg_alpha", 1, 15, log=True),
                 "reg_lambda": trial.suggest_float("reg_lambda", 10, 30, log=True),
                 "device": "cuda", # use gpu
@@ -93,7 +93,7 @@ def tuneHyperparams(yearNow, instr, gran,
             # pass score to study object
             return np.mean(foldScores)
         
-        # study object (optuna magic round 2)
+        # study object (main optuna magic)
         study = optuna.create_study(direction="maximize")
         study.optimize(objective, n_trials=60, show_progress_bar=True)
 

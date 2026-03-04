@@ -28,8 +28,8 @@ filepath = os.path.join(directory, filename)
 # deserialise json data
 with open(filepath, "r") as file:
     rawFeatures = json.load(file) # rawFeatures is a Python dict
-# extract top 11 features into list
-bestFeatures = list(rawFeatures.keys())[:11]
+# extract top 15 features into list
+bestFeatures = list(rawFeatures.keys())[:15]
 print("Best features:", bestFeatures)
 
 # DEFINE HYPERPARAMETERS (use results from Phase 3)
@@ -84,8 +84,8 @@ y_prob = model.predict_proba(X_test)
 
 # EVALUATE MODEL
 accuracy = accuracy_score(y_test, y_pred)*100
-f1Score = f1_score(y_test, y_pred, average="macro")
-trainF1Score = f1_score(y_train, y_predTrain, average="macro") # compare with f1Score to check overfitting
+f1Score = f1_score(y_test, y_pred, average="macro", zero_division=0)
+trainF1Score = f1_score(y_train, y_predTrain, average="macro", zero_division=0) # compare with f1Score to check overfitting
 rocAucScore = roc_auc_score(y_test, y_prob, multi_class="ovr", average="macro")
 # precision: accuracy of positive predictions for each class (up/down)
 # recall: correctly identified positives / total true positives
