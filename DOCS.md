@@ -81,7 +81,7 @@ Recall (0-1) => Correctly predicted 1's / All real 1's\
 <br/>
 
 ### Model 5.2
-*Changes from v5: Include 18 features instead of 15*\
+*Changes from v5: Include 18 features instead of 15, implement purge margin between train and test sets to prevent leakage*\
 **Features:** ["atr_14", "volatility_momentum", "vol_ratio_lag3", "volatility_regime", "vol_ratio_lag4", "hl_spread", "vol_ratio_lag1", "trend_strength", "normalised_ema50", "vol_momentum", "bb_width", "vol_ratio", "macd_hist", "upper_wick", "vol_trend", "normalised_ema15", "return_lag3", "dist_ema15"]\
 **Hyperparameters:** {\
 "max_depth": 3 *(3, 4)*,\
