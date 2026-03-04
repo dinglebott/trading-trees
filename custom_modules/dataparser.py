@@ -73,8 +73,8 @@ def parseData(jsonPath):
         df[f"vol_ratio_lag{lag}"] = df["vol_ratio"].shift(lag)
     
     # new features (v5+)
-    df["upper_wick"] = (df["high"] - df[["open", "close"]].max(axis=1)) / df["atr_14"]
-    df["lower_wick"] = (df[["open", "close"]].min(axis=1) - df["low"]) / df["atr_14"]
+    df["upper_wick"] = (df["high"] - df[["open", "close"]].max(axis=1)) / df["atr_14"] # removed v5.2+
+    df["lower_wick"] = (df[["open", "close"]].min(axis=1) - df["low"]) / df["atr_14"] # removed v5.2+
     df["direction"] = np.sign(df["close"] - df["open"])
     df["volatility_momentum"] = df["rsi_14"] * df["atr_14"]
     df["vol_trend"] = df["vol_ratio"] * df["normalised_ema50"]
@@ -83,7 +83,7 @@ def parseData(jsonPath):
 
     # new features (v5.1+)
     df["atr_adjusted_return"] = df["return"] / df["atr_14"]
-    df["return_accel"] = df["return_lag1"] - df["return_lag2"]
+    df["return_accel"] = df["return_lag1"] - df["return_lag2"] # removed v5.2+
     df["vol_momentum"] = df["vol_ratio"] - df["vol_ratio"].rolling(5).mean()
     df["dist_ema15"] = (df["close"] - df["raw_ema15"]) / df["atr_14"]
     

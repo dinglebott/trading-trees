@@ -28,9 +28,9 @@ def evaluateFeatures(yearNow, instr, gran,
         "vol_ratio", "bb_position",
         "return_lag1", "return_lag2", "return_lag3", "return_lag4",
         "vol_ratio_lag1", "vol_ratio_lag2", "vol_ratio_lag3", "vol_ratio_lag4",
-        "upper_wick", "lower_wick", "direction", "volatility_momentum", "vol_trend", # v5+
+        "volatility_momentum", "vol_trend", # v5+
         "trend_strength", "volatility_regime", # v5+
-        "atr_adjusted_return", "return_accel", "vol_momentum", "dist_ema15" # v5.1+
+        "atr_adjusted_return", "vol_momentum", "dist_ema15" # v5.1+
     ]
     
     # LOAD DATAFRAME
@@ -46,6 +46,7 @@ def evaluateFeatures(yearNow, instr, gran,
         dfTrain = dataparser.splitByDate(df, datetime(yearNow - 16 + fold, 1, 1), datetime(yearNow - 11 + fold, 1, 1))
         dfVal = dataparser.splitByDate(df, datetime(yearNow - 11 + fold, 1, 1), datetime(yearNow - 10 + fold, 1, 1))
         dfTest = dataparser.splitByDate(df, datetime(yearNow - 10 + fold, 1, 1), datetime(yearNow - 9 + fold, 1, 1))
+        dfTrain.drop(dfTrain.tail(n).index, inplace=True) # drop last n rows to prevent data leakage
 
         # target variable: next n candles net return => negative (0), flat (1), positive (2)
         for dataset in (dfTrain, dfVal, dfTest):

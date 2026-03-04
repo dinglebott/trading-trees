@@ -74,9 +74,10 @@ def tuneHyperparams(yearNow, instr, gran,
 
             # loop through subfolds
             for trainIndexes, valIndexes in crossValSplit.split(X_set):
-                X_train = X_set.iloc[trainIndexes]
+                purgedTrainIndexes = trainIndexes[:-n] # prevent leaking from candlesAhead
+                X_train = X_set.iloc[purgedTrainIndexes]
                 X_val = X_set.iloc[valIndexes]
-                y_train = y_set.iloc[trainIndexes]
+                y_train = y_set.iloc[purgedTrainIndexes]
                 y_val = y_set.iloc[valIndexes]
 
                 # create and train model

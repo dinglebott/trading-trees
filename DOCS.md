@@ -80,6 +80,31 @@ Precision (0-1) => Correctly predicted 1's / All predicted 1's\
 Recall (0-1) => Correctly predicted 1's / All real 1's\
 <br/>
 
+### Model 5.2
+*Changes from v5: Include 18 features instead of 15*\
+**Features:** ["atr_14", "volatility_momentum", "vol_ratio_lag3", "volatility_regime", "vol_ratio_lag4", "hl_spread", "vol_ratio_lag1", "trend_strength", "normalised_ema50", "vol_momentum", "bb_width", "vol_ratio", "macd_hist", "upper_wick", "vol_trend", "normalised_ema15", "return_lag3", "dist_ema15"]\
+**Hyperparameters:** {\
+"max_depth": 3 *(3, 4)*,\
+"learning_rate": 0.07355 *(0.005, 0.1)*,\
+"subsample": 0.50771 *(0.35, 0.65)*,\
+"colsample_bytree": 0.49341 *(0.35, 0.65)*,\
+"min_child_weight": 82 *(60, 120)*,\
+"reg_alpha": 6.37464 *(1, 15)*,\
+"reg_lambda": 14.70787 *(10, 30)*\
+}\
+*(Search spaces in italicised brackets)*\
+**Accuracy:** 41.161%\
+**F1 score (macro-averaged):** 0.40182\
+**F1 score (train set):** 0.44231\
+**ROC-AUC score:** 0.59081\
+**Confusion matrix:**
+| &nbsp; | Pred - | Pred ~ | Pred + |
+| --- | --- | --- | --- |
+| Real - | 146 | 177 | 149 |
+| Real ~ | 115 | 307 | 115 |
+| Real + | 164 | 180 | 185 |
+<br/>
+
 ### Model 5.1
 *Changes from v5: Added more features, include 15 instead of 11 features, calibrated min_child_weight*\
 **Features:** ["atr_14", "volatility_momentum", "vol_ratio_lag3", "vol_ratio_lag4", "volatility_regime", "hl_spread", "vol_ratio_lag1", "normalised_ema50", "trend_strength", "vol_momentum", "bb_width", "vol_ratio", "macd_hist", "upper_wick", "vol_trend"]\
