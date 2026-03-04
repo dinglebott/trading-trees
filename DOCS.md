@@ -80,29 +80,29 @@ Precision (0-1) => Correctly predicted 1's / All predicted 1's\
 Recall (0-1) => Correctly predicted 1's / All real 1's\
 <br/>
 
-### Model X
+### Model 5.1
 *Changes from v5: Added more features, include 15 instead of 11 features, calibrated min_child_weight*\
 **Features:** ["atr_14", "volatility_momentum", "vol_ratio_lag3", "vol_ratio_lag4", "volatility_regime", "hl_spread", "vol_ratio_lag1", "normalised_ema50", "trend_strength", "vol_momentum", "bb_width", "vol_ratio", "macd_hist", "upper_wick", "vol_trend"]\
 **Hyperparameters:** {\
-"max_depth": 3 *(3, 4)*,\
-"learning_rate": 0.05885 *(0.005, 0.1)*,\
-"subsample": 0.52596 *(0.35, 0.65)*,\
-"colsample_bytree": 0.51763 *(0.35, 0.65)*,\
-"min_child_weight": 84 *(60, 120)*,\
-"reg_alpha": 4.38079 *(1, 15)*,\
-"reg_lambda": 22.18329 *(10, 30)*\
+"max_depth": 4 *(3, 4)*,\
+"learning_rate": 0.07579 *(0.005, 0.1)*,\
+"subsample": 0.40476 *(0.35, 0.65)*,\
+"colsample_bytree": 0.49986 *(0.35, 0.65)*,\
+"min_child_weight": 91 *(60, 120)*,\
+"reg_alpha": 4.82835 *(1, 15)*,\
+"reg_lambda": 16.83605 *(10, 30)*\
 }\
 *(Search spaces in italicised brackets)*\
-**Accuracy:** 41.419%\
-**F1 score (macro-averaged):** 0.40125\
-**F1 score (train set):** 0.43508\
-**ROC-AUC score:** 0.59432\
+**Accuracy:** 41.677%\
+**F1 score (macro-averaged):** 0.40622\
+**F1 score (train set):** 0.44044\
+**ROC-AUC score:** 0.59140\
 **Confusion matrix:**
 | &nbsp; | Pred - | Pred ~ | Pred + |
 | --- | --- | --- | --- |
-| Real - | 145 | 194 | 133 |
-| Real ~ | 113 | 325 | 111 |
-| Real + | 161 | 196 | 172 |
+| Real - | 161 | 181 | 130 |
+| Real ~ | 117 | 317 | 115 |
+| Real + | 165 | 196 | 168 |
 <br/>
 
 ### Model 5
