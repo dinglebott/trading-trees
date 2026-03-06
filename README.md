@@ -1,8 +1,9 @@
 ## About project
 Goal: Predict the direction of future price movements in forex markets by training a machine-learning model\
-Model type: Tree-based model which uses gradient boosting (XGBoost)
+Model type: Tree-based model which uses gradient boosting (XGBoost)\
 See DOCS.md for details on data collection, tuning, training, and testing methodology\
-Fully-trained models located in models folder, tuned with results obtained by me
+Fully-trained models located in models folder, tuned with results obtained by me\
+*See forex-RNN for part 2 of the project*
 
 ## Outline of methodology
 Phase 1: Fetch historical data => fetch_data.py\
