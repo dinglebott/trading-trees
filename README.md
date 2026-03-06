@@ -26,6 +26,8 @@ Output for all phases is printed to the terminal, and the final model is automat
 You need an OANDA API key to pull historical data (or you can use the data I pulled already)\
 If you have a key, set it as an environment variable API_KEY in a local .env file\
 The code fetches from the api-fxtrade.oanda.com live server, so if your key is from a demo account, change this to api-fxpractice.oanda.com
+#### IMPORTANT:
+The code tunes and trains the model using a CUDA-enabled GPU. If your device doesn't have this, change the "device" parameter from "cuda" to "cpu" in the relevant parts of featurepicker.py and paramtuner.py
 
 ## How to use a model
 Run use_model.py\
