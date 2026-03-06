@@ -40,12 +40,19 @@ probabilities = model.predict_proba(latestCandle)[0] # gets the only row of the 
 probabilities *= 100 # convert to percentages
 
 # DISPLAY RESULTS
-match prediction:
-    case 0:
-        predictionLabel = "DOWN"
-    case 1:
-        predictionLabel = "FLAT"
-    case 2:
-        predictionLabel = "UP"
-print(f"Prediction: {predictionLabel}")
-print(f"Probability array: {[f"{x:.2f}%" for x in probabilities]}")
+def getLabel(num):
+    match num:
+        case 0:
+            return "DOWN"
+        case 1:
+            return "FLAT"
+        case 2:
+            return "UP"
+
+print("")
+for idx, x in enumerate([f"{prob:.2f}%" for prob in probabilities]): # round probabilities to 2sf, format with "%"
+    print(f"{getLabel(idx)}: {x}") # label each probability and print
+
+print(f"\nFinal prediction: {getLabel(prediction)}")
+
+input("\nPress Enter to exit")
