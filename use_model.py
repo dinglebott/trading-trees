@@ -37,6 +37,7 @@ df = dataparser.parseData(jsonPath)
 latestCandle = df[features].iloc[[-1]] # slice out last row (last candle)
 prediction = model.predict(latestCandle)[0] # gets the only element of the 1D numpy array [n_samples]
 probabilities = model.predict_proba(latestCandle)[0] # gets the only row of the 2D numpy array [n_samples, n_classes]
+probabilities *= 100 # convert to percentages
 
 # DISPLAY RESULTS
 match prediction:
@@ -47,4 +48,4 @@ match prediction:
     case 2:
         predictionLabel = "UP"
 print(f"Prediction: {predictionLabel}")
-print(f"Confidence: {probabilities.max()*100:.2f}%")
+print(f"Probability array: {[f"{x:.2f}%" for x in probabilities]}")
