@@ -1,5 +1,5 @@
 ## RAW DATA COLLECTION
-Instrument: EUR_USD with a granularity of 1hr\
+Instrument: EUR_USD at 4-hour timeframe\
 Candle data: OHLCV (open, high, low, close, volume)\
 Time period: 2010-01-01 to 2026-01-01\
 Pulled from OANDA REST-v20 API, stored in JSON format\
