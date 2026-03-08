@@ -28,7 +28,7 @@ High-low spread (normalised) => (H - L) / C\
 Open-close spread (normalised) => (C - O) / C *(Removed in v5+)*\
 Body ratio => OC spread / HL spread\
 **Trend:**\
-12-period EMA (normalised) => (C / EMA) - 1\
+15-period EMA (normalised) => (C / EMA) - 1\
 50-period EMA (normalised) => (C / EMA) - 1\
 **Momentum:**\
 14-period RSI\
