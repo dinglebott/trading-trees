@@ -80,6 +80,31 @@ Precision (0-1) => Correctly predicted 1's / All predicted 1's\
 Recall (0-1) => Correctly predicted 1's / All real 1's\
 <br/>
 
+### Model 7
+*Changes from v6: Apply Kalman filter to close prices*\
+**Features:** ["atr_adjusted_return", "volatility_regime", "body_ratio", "vol_ratio_lag3", "bb_width", "vol_momentum", "vol_ratio", "vol_ratio_lag4", "vol_ratio_lag1", "hl_spread", "trend_strength", "return_lag4", "bb_position", "return_lag1", "dist_ema15"]\
+**Hyperparameters:** {\
+"max_depth": 3 *(3, 4)*,\
+"learning_rate": 0.07102 *(0.005, 0.1)*,\
+"subsample": 0.50436 *(0.35, 0.65)*,\
+"colsample_bytree": 0.49049 *(0.35, 0.65)*,\
+"min_child_weight": 86 *(60, 120)*,\
+"reg_alpha": 8.75358 *(1, 15)*,\
+"reg_lambda": 22.06113 *(10, 30)*\
+}\
+*(Search spaces in italicised brackets)*\
+**Accuracy:** 41.355%\
+**F1 score (macro-averaged):** 0.41118\
+**F1 score (train set):** 0.44762\
+**ROC-AUC score:** 0.58391\
+**Confusion matrix:**
+| &nbsp; | Pred - | Pred ~ | Pred + |
+| --- | --- | --- | --- |
+| Real - | 173 | 149 | 146 |
+| Real ~ | 168 | 253 | 140 |
+| Real + | 141 | 165 | 215 |
+<br/>
+
 ### Model 6
 *Changes from v5.4: Revert prediction window back to 4 candles, deadzone = 0.0015, included 15 features*\
 **Features:** ["atr_14", "volatility_momentum", "vol_ratio_lag3", "volatility_regime", "vol_ratio_lag4", "hl_spread", "normalised_ema50", "vol_ratio_lag1", "trend_strength", "bb_width", "vol_ratio", "vol_momentum", "dist_ema15", "macd_hist", "vol_trend"]\

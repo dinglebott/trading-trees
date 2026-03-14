@@ -10,12 +10,12 @@ import shap
 def evaluateFeatures(yearNow, instr, gran,
                  params={
                      "max_depth": 4,
-                     "learning_rate": 0.05,
+                     "learning_rate": 0.07,
                      "subsample": 0.5,
                      "colsample_bytree": 0.5,
-                     "min_child_weight": 55,
-                     "reg_alpha": 8,
-                     "reg_lambda": 20,
+                     "min_child_weight": 140,
+                     "reg_alpha": 14,
+                     "reg_lambda": 25,
                      "device": "cuda", # use gpu
                      "tree_method": "hist"
                  }, n=5, deadzone=0.001, midThreshold=0):
@@ -52,8 +52,8 @@ def evaluateFeatures(yearNow, instr, gran,
         for dataset in (dfTrain, dfVal, dfTest):
             dataset["forward_return"] = (dataset["close"].shift(-n) / dataset["close"]) - 1
             conditions = [
-                dataset["forward_return"] < midThreshold - deadzone, # downward move
-                dataset["forward_return"] > midThreshold + deadzone # upward move
+                dataset["forward_return"] < midThreshold - 0.5*dataset["atr_14"], # downward move
+                dataset["forward_return"] > midThreshold + 0.5*dataset["atr_14"] # upward move
             ]
             choices = [0, 2]
             dataset["target"] = np.select(conditions, choices, default=1) # if not up or down, return flat (1)

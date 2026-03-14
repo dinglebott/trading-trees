@@ -47,8 +47,8 @@ print("Best hyperparameters:", bestParams)
 for dataset in (dfTrain, dfVal, dfTest):
     dataset["forward_return"] = (dataset["close"].shift(-candlesAhead) / dataset["close"]) - 1
     conditions = [
-        dataset["forward_return"] < midThreshold - deadzone, # downward move
-        dataset["forward_return"] > midThreshold + deadzone # upward move
+        dataset["forward_return"] < midThreshold - 0.48*dataset["atr_14"], # downward move
+        dataset["forward_return"] > midThreshold + 0.48*dataset["atr_14"] # upward move
     ]
     choices = [0, 2]
     dataset["target"] = np.select(conditions, choices, default=1) # if not up or down, return flat (1)
@@ -97,6 +97,7 @@ rocAucScore = roc_auc_score(y_test, y_prob, multi_class="ovr", average="macro")
 cmatrix = confusion_matrix(y_test, y_pred)
 # returns 2x2 numpy array breaking down true/false positives/negatives
 cmatrixDf = pd.DataFrame(cmatrix, index=["Real -", "Real ~", "Real +"], columns=["Pred -", "Pred ~", "Pred +"])
+cmatrixDf["Count"] = cmatrixDf.sum(axis=1)
 print(f"Accuracy: {accuracy:.3f}%")
 print(f"F1 score (macro-averaged): {f1Score:.5f}")
 print(f"F1 score (train set): {trainF1Score:.5f}")

@@ -1,9 +1,20 @@
 # EXPORTS:
 # parseData() adds features and returns DataFrame
 # splitByDate() returns specified slice of DataFrame by date
+# directionalF1() computes F1 with higher weights for up and down rather than flat
 import json
 import pandas as pd
 import numpy as np
+from pykalman import KalmanFilter
+from sklearn.metrics import f1_score
+
+def kalmanDenoise(series):
+    kf = KalmanFilter(transition_matrices=[1], observation_matrices=[1],
+                      initial_state_mean=series[0],
+                      n_dim_obs=1)
+    kf = kf.em(series, n_iter=10)
+    stateMeans, _ = kf.filter(series)
+    return stateMeans.flatten()
 
 def parseData(jsonPath):
     # deserialise json data
@@ -23,6 +34,10 @@ def parseData(jsonPath):
                 "volume": c["volume"]
             })
     df = pd.DataFrame(records)
+
+    # denoise
+    df["close"] = kalmanDenoise(df["close"].values.copy())  [:len(df)]
+    df["volume"] = kalmanDenoise(df["volume"].values.copy())[:len(df)]
 
     # ADD FEATURES
     # helper
@@ -97,3 +112,8 @@ def splitByDate(df, start, end):
     mask = (times >= start) & (times < end)
     return df[mask].reset_index(drop=True)
     # df[boolean-mask] filters out values according to the mask
+
+def directionalF1(y_true, y_pred, flat_weight=0.8):
+    f1_per_class = f1_score(y_true, y_pred, average=None, labels=[0, 1, 2], zero_division=0)
+    weights = np.array([1.0, flat_weight, 1.0])
+    return np.dot(weights, f1_per_class) / weights.sum()

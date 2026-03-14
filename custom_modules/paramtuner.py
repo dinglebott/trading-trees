@@ -40,8 +40,8 @@ def tuneHyperparams(yearNow, instr, gran,
         # target variable: next n candles net return => negative (0), flat (1), positive (2)
         foldDf["forward_return"] = (foldDf["close"].shift(-n) / foldDf["close"]) - 1
         conditions = [
-            foldDf["forward_return"] < midThreshold - deadzone, # downward move
-            foldDf["forward_return"] > midThreshold + deadzone # upward move
+            foldDf["forward_return"] < midThreshold - 0.5*foldDf["atr_14"], # downward move
+            foldDf["forward_return"] > midThreshold + 0.5*foldDf["atr_14"] # upward move
         ]
         choices = [0, 2]
         foldDf["target"] = np.select(conditions, choices, default=1) # if not up or down, return flat (1)
@@ -57,13 +57,13 @@ def tuneHyperparams(yearNow, instr, gran,
                 "verbosity": 0,
                 "objective": "multi:softprob", # function to minimise (multiclass probability)
                 "num_class": 3, # no. of classes
-                "max_depth": trial.suggest_int("max_depth", 3, 4),
-                "learning_rate": trial.suggest_float("learning_rate", 0.005, 0.1, log=True),
-                "subsample": trial.suggest_float("subsample", 0.35, 0.65),
-                "colsample_bytree": trial.suggest_float("colsample_bytree", 0.35, 0.65),
-                "min_child_weight": trial.suggest_int("min_child_weight", 60, 120),
-                "reg_alpha": trial.suggest_float("reg_alpha", 1, 15, log=True),
-                "reg_lambda": trial.suggest_float("reg_lambda", 10, 30, log=True),
+                "max_depth": trial.suggest_categorical("max_depth", [3]),
+                "learning_rate": trial.suggest_float("learning_rate", 0.06, 0.15),
+                "subsample": trial.suggest_float("subsample", 0.45, 0.6),
+                "colsample_bytree": trial.suggest_float("colsample_bytree", 0.45, 0.6),
+                "min_child_weight": trial.suggest_int("min_child_weight", 140, 170),
+                "reg_alpha": trial.suggest_float("reg_alpha", 15, 24, log=True),
+                "reg_lambda": trial.suggest_float("reg_lambda", 25, 35, log=True),
                 "device": "cuda", # use gpu
                 "tree_method": "hist"
             }
